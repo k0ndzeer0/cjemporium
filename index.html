@@ -25,6 +25,257 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             position: relative;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Tema Claro */
+        body.theme-light {
+            background: #F5F5F5;
+            color: #1A1A1A;
+        }
+
+        body.theme-light .card {
+            background: #FFFFFF;
+            border-color: rgba(0, 0, 0, 0.1);
+            color: #1A1A1A;
+        }
+
+        body.theme-light .sidebar {
+            background: #FFFFFF;
+            border-right-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.theme-light .sidebar-overlay {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        body.theme-light .mobile-menu-toggle {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: rgba(212, 175, 55, 0.2);
+        }
+
+        body.theme-light .nav-item {
+            color: #4A4A4A;
+        }
+
+        body.theme-light .nav-item:hover,
+        body.theme-light .nav-item.active {
+            background: rgba(212, 175, 55, 0.1);
+            color: #D4AF37;
+        }
+
+        body.theme-light .btn-primary {
+            background: #D4AF37;
+            color: #1A1A1A;
+        }
+
+        body.theme-light .btn-secondary {
+            background: #E5E5E5;
+            color: #1A1A1A;
+        }
+
+        body.theme-light input,
+        body.theme-light select,
+        body.theme-light textarea {
+            background: #F5F5F5;
+            border-color: rgba(0, 0, 0, 0.2);
+            color: #1A1A1A;
+        }
+
+        body.theme-light input::placeholder,
+        body.theme-light textarea::placeholder {
+            color: rgba(26, 26, 26, 0.5);
+        }
+
+        body.theme-light input:focus,
+        body.theme-light select:focus,
+        body.theme-light textarea:focus {
+            background: #FFFFFF;
+            border-color: #D4AF37;
+            color: #1A1A1A;
+        }
+
+        /* Títulos no tema claro */
+        body.theme-light h1,
+        body.theme-light h2,
+        body.theme-light h3,
+        body.theme-light .page-header h1 {
+            color: #1A1A1A;
+        }
+
+        body.theme-light .page-header {
+            color: #1A1A1A;
+        }
+
+        /* Cards de estatísticas */
+        body.theme-light .stat-card {
+            background: #FFFFFF;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.theme-light .stat-value {
+            color: #1A1A1A;
+        }
+
+        body.theme-light .stat-label {
+            color: rgba(26, 26, 26, 0.7);
+        }
+
+        /* Tabelas */
+        body.theme-light .data-table {
+            color: #1A1A1A;
+        }
+
+        body.theme-light .data-table thead {
+            background: #F5F5F5;
+        }
+
+        body.theme-light .data-table th {
+            color: #1A1A1A;
+            border-bottom-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.theme-light .data-table td {
+            color: #1A1A1A;
+            border-bottom-color: rgba(0, 0, 0, 0.05);
+        }
+
+        body.theme-light .data-table tbody tr:hover {
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        /* Kanban */
+        body.theme-light .kanban-column {
+            background: #FFFFFF;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.theme-light .kanban-card {
+            background: #F5F5F5;
+            border-color: rgba(0, 0, 0, 0.1);
+            color: #1A1A1A;
+        }
+
+        body.theme-light .kanban-card h3 {
+            color: #1A1A1A;
+        }
+
+        body.theme-light .kanban-card p {
+            color: rgba(26, 26, 26, 0.7);
+        }
+
+        /* Status badges */
+        body.theme-light .status-badge {
+            color: #1A1A1A;
+        }
+
+        /* Product cards */
+        body.theme-light .product-card {
+            background: #FFFFFF;
+            border-color: rgba(0, 0, 0, 0.1);
+            color: #1A1A1A;
+        }
+
+        body.theme-light .product-card h3 {
+            color: #1A1A1A;
+        }
+
+        body.theme-light .product-info {
+            color: #1A1A1A;
+        }
+
+        /* Modal */
+        body.theme-light .modal-content {
+            background: #FFFFFF;
+            color: #1A1A1A;
+        }
+
+        body.theme-light .modal-header h2 {
+            color: #1A1A1A;
+        }
+
+        /* Settings */
+        body.theme-light .settings-menu-item {
+            color: rgba(26, 26, 26, 0.7);
+        }
+
+        body.theme-light .settings-menu-item:hover {
+            background: rgba(212, 175, 55, 0.1);
+            color: #D4AF37;
+        }
+
+        body.theme-light .settings-menu-item.active {
+            background: rgba(212, 175, 55, 0.2);
+            color: #D4AF37;
+        }
+
+        body.theme-light .settings-section .form-group label {
+            color: #1A1A1A;
+        }
+
+        body.theme-light .settings-section .form-group small {
+            color: rgba(26, 26, 26, 0.6);
+        }
+
+        /* Empty state */
+        body.theme-light .empty-state {
+            color: rgba(26, 26, 26, 0.5);
+        }
+
+        /* Links e textos secundários */
+        body.theme-light p,
+        body.theme-light span,
+        body.theme-light div {
+            color: inherit;
+        }
+
+        body.theme-light .user-name,
+        body.theme-light .user-role {
+            color: rgba(26, 26, 26, 0.7);
+        }
+
+        /* Densidade Compacta */
+        body.density-compact .card {
+            padding: 1rem;
+        }
+
+        body.density-compact .form-group {
+            margin-bottom: 1rem;
+        }
+
+        body.density-compact .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        body.density-compact .page-header {
+            padding: 1rem 0;
+        }
+
+        /* Densidade Espaçosa */
+        body.density-spacious .card {
+            padding: 2.5rem;
+        }
+
+        body.density-spacious .form-group {
+            margin-bottom: 2rem;
+        }
+
+        body.density-spacious .btn {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+        }
+
+        body.density-spacious .page-header {
+            padding: 2rem 0;
+        }
+
+        /* Animações */
+        body.no-animations *,
+        body.no-animations *::before,
+        body.no-animations *::after {
+            animation: none !important;
+            transition: none !important;
         }
         
         body::before {
@@ -34,14 +285,18 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('https://zpqtcrfygjtjtacufgbv.supabase.co/storage/v1/object/public/logos/White%20Minimalist%20Handwritten%20Signature%20Typography%20Logo%20(1).png');
+            background-image: url('https://zpqtcrfygjtjtacufgbv.supabase.co/storage/v1/object/public/logos/Design%20sem%20nome%20(12).png');
             background-repeat: no-repeat;
             background-position: center center;
-            background-size: 35% auto;
-            opacity: 0.04;
+            background-size: cover;
+            opacity: 0.03;
             z-index: 0;
             pointer-events: none;
-            filter: invert(1) brightness(0.3);
+        }
+
+        /* Imagem de fundo apenas no tema escuro */
+        body.theme-light::before {
+            display: none;
         }
 
         .screen {
@@ -221,6 +476,53 @@
             border-right: 1px solid rgba(212, 175, 55, 0.1);
             display: flex;
             flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #D4AF37;
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-toggle:hover {
+            background: rgba(212, 175, 55, 0.25);
+            transform: scale(1.05);
+        }
+
+        .mobile-menu-toggle.active {
+            background: rgba(212, 175, 55, 0.3);
         }
 
         .sidebar-header {
@@ -552,12 +854,32 @@
             border: 1px solid rgba(184, 138, 68, 0.15);
             color: #F5F3EF;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
         }
 
         .product-card:hover {
             transform: translateY(-4px);
             border-color: rgba(212, 175, 55, 0.3);
             box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+        }
+
+        .product-card.low-stock {
+            border-color: rgba(251, 191, 36, 0.4);
+            background: linear-gradient(135deg, #1A1A1A 0%, #2B2B2B 100%);
+        }
+
+        .product-card.low-stock:hover {
+            border-color: rgba(251, 191, 36, 0.6);
+        }
+
+        .product-card.out-of-stock {
+            border-color: rgba(239, 68, 68, 0.4);
+            background: linear-gradient(135deg, #1A1A1A 0%, #2B2B2B 100%);
+            opacity: 0.85;
+        }
+
+        .product-card.out-of-stock:hover {
+            border-color: rgba(239, 68, 68, 0.6);
         }
 
         .product-card h3 {
@@ -571,6 +893,84 @@
             margin-bottom: 0.5rem;
             font-size: 0.875rem;
             color: #F5F3EF;
+        }
+
+        /* Settings */
+        .settings-menu-item {
+            width: 100%;
+            padding: 1rem;
+            background: transparent;
+            border: none;
+            color: rgba(245, 243, 239, 0.7);
+            text-align: left;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-bottom: 0.25rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9375rem;
+        }
+
+        .settings-menu-item:hover {
+            background: rgba(212, 175, 55, 0.1);
+            color: #D4AF37;
+        }
+
+        .settings-menu-item.active {
+            background: rgba(212, 175, 55, 0.2);
+            color: #D4AF37;
+            font-weight: 500;
+        }
+
+        .settings-menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .settings-section {
+            display: none;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
+        .settings-section .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-section .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: rgba(245, 243, 239, 0.9);
+            font-weight: 500;
+        }
+
+        .settings-section .form-group input[type="text"],
+        .settings-section .form-group input[type="email"],
+        .settings-section .form-group input[type="number"],
+        .settings-section .form-group input[type="password"],
+        .settings-section .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            background: #0F0F0F;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+            color: #F5F3EF;
+            font-size: 0.9375rem;
+        }
+
+        .settings-section .form-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .settings-section .form-group small {
+            display: block;
+            margin-top: 0.5rem;
+            color: rgba(245, 243, 239, 0.6);
+            font-size: 0.875rem;
         }
 
         /* Modal */
@@ -926,24 +1326,181 @@
         }
 
         /* Responsive */
+        /* Responsividade Mobile */
         @media (max-width: 768px) {
+            #app-screen {
+                position: relative;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
             .sidebar {
-                width: 80px;
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 1000;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
             }
-            .nav-item span {
-                display: none;
+
+            .sidebar.active {
+                transform: translateX(0);
             }
+
             .main-content {
-                padding: 1.5rem;
+                padding: 1rem;
+                padding-top: 4rem;
             }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
             .page-header h1 {
-                font-size: 2rem;
+                font-size: 1.75rem;
             }
+
             .stats-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
+
+            .kanban-board {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
             .kanban-column {
                 min-width: 280px;
+            }
+
+            /* Tabelas responsivas */
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            table {
+                min-width: 600px;
+            }
+
+            /* Cards de produtos */
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Modais responsivos */
+            .modal-content {
+                width: 95%;
+                max-width: 95%;
+                margin: 1rem auto;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            /* Formulários */
+            .form-row {
+                flex-direction: column;
+            }
+
+            .form-group {
+                width: 100%;
+            }
+
+            /* Botões */
+            .btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            /* Cards */
+            .card {
+                padding: 1rem;
+            }
+
+            /* Sidebar footer */
+            .sidebar-footer {
+                padding: 1rem;
+            }
+
+            .user-info {
+                font-size: 0.875rem;
+            }
+
+            /* Kanban cards menores */
+            .kanban-card {
+                padding: 0.75rem;
+                font-size: 0.875rem;
+            }
+
+            /* Dashboard stats */
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 1.25rem;
+            }
+
+            /* Configurações */
+            .settings-container {
+                flex-direction: column;
+            }
+
+            .settings-menu {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+
+            .settings-content {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 0.75rem;
+                padding-top: 3.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .modal-content {
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                border-radius: 0;
+                max-height: 100vh;
+            }
+
+            .mobile-menu-toggle {
+                top: 0.75rem;
+                left: 0.75rem;
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-width: 320px;
+            }
+
+            .stats-grid {
+                gap: 0.75rem;
+            }
+
+            .stat-card {
+                padding: 0.75rem;
             }
         }
 
@@ -1001,26 +1558,29 @@
                 <img src="https://zpqtcrfygjtjtacufgbv.supabase.co/storage/v1/object/public/logos/LOGO%20SEM%20FUNDO.png" alt="CJ Empórium Logo" />
             </div>
             <nav class="sidebar-nav">
-                <a class="nav-item active" data-page="dashboard">
+                <a class="nav-item active" data-page="dashboard" data-permission="view_dashboard">
                     <i class="fas fa-chart-line"></i> <span>Dashboard</span>
                 </a>
-                <a class="nav-item" data-page="kanban">
-                    <i class="fas fa-columns"></i> <span>Kanban</span>
-                </a>
-                <a class="nav-item" data-page="customers">
+                <a class="nav-item" data-page="customers" data-permission="view_customers">
                     <i class="fas fa-users"></i> <span>Clientes</span>
                 </a>
-                <a class="nav-item" data-page="products">
+                <a class="nav-item" data-page="products" data-permission="view_products">
                     <i class="fas fa-box"></i> <span>Produtos</span>
                 </a>
-                <a class="nav-item" data-page="sales">
+                <a class="nav-item" data-page="sales" data-permission="view_sales">
                     <i class="fas fa-shopping-cart"></i> <span>Vendas</span>
                 </a>
-                <a class="nav-item" data-page="financial">
+                <a class="nav-item" data-page="financial" data-permission="view_financial">
                     <i class="fas fa-chart-pie"></i> <span>Financeiro</span>
                 </a>
-                <a class="nav-item" data-page="recurrence">
+                <a class="nav-item" data-page="recurrence" data-permission="view_customers">
                     <i class="fas fa-sync-alt"></i> <span>Recorrência</span>
+                </a>
+                <a class="nav-item" data-page="profile" data-permission="view_users">
+                    <i class="fas fa-user-circle"></i> <span>Perfil</span>
+                </a>
+                <a class="nav-item" data-page="settings" data-permission="view_settings">
+                    <i class="fas fa-cog"></i> <span>Configurações</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
@@ -1035,6 +1595,14 @@
         </aside>
 
         <main class="main-content">
+            <!-- Botão Hambúrguer Mobile -->
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <!-- Overlay para fechar menu no mobile -->
+            <div class="sidebar-overlay" id="sidebar-overlay"></div>
+            
             <!-- Dashboard -->
             <div id="dashboard-page" class="page active">
                 <div class="page-header">
@@ -1080,17 +1648,6 @@
                 </div>
             </div>
 
-            <!-- Kanban -->
-            <div id="kanban-page" class="page">
-                <div class="page-header">
-                    <h1>CRM Kanban</h1>
-                    <button class="btn btn-primary" id="add-customer-btn">
-                        <i class="fas fa-plus"></i> Novo Cliente
-                    </button>
-                </div>
-                <div class="kanban-board" id="kanban-board"></div>
-            </div>
-
             <!-- Customers -->
             <div id="customers-page" class="page">
                 <div class="page-header">
@@ -1099,7 +1656,49 @@
                         <i class="fas fa-plus"></i> Novo Cliente
                     </button>
                 </div>
+                
+                <!-- Barra de Busca e Filtros -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                        <div style="flex: 1; min-width: 250px;">
+                            <div style="position: relative;">
+                                <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: rgba(245, 243, 239, 0.5);"></i>
+                                <input type="text" id="customer-search" placeholder="Buscar por nome, telefone ou e-mail..." 
+                                    style="width: 100%; padding: 0.75rem 0.75rem 0.75rem 2.5rem; background: #1A1A1A; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 8px; color: #F5F3EF; font-size: 0.9rem;">
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <select id="customer-filter-status" style="padding: 0.75rem; background: #1A1A1A; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 8px; color: #F5F3EF; font-size: 0.9rem; cursor: pointer;">
+                                <option value="">Todos os Status</option>
+                                <option value="novo">Novo</option>
+                                <option value="contato">Contato Realizado</option>
+                                <option value="negociacao">Em Negociação</option>
+                                <option value="aguardando">Aguardando Retorno</option>
+                                <option value="cliente">Cliente</option>
+                                <option value="recorrente">Recorrente</option>
+                                <option value="perdido">Perdido</option>
+                            </select>
+                            <select id="customer-filter-followup" style="padding: 0.75rem; background: #1A1A1A; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 8px; color: #F5F3EF; font-size: 0.9rem; cursor: pointer;">
+                                <option value="">Todos os Follow-ups</option>
+                                <option value="overdue">Follow-ups Vencidos</option>
+                                <option value="today">Hoje</option>
+                                <option value="week">Esta Semana</option>
+                            </select>
+                            <button id="clear-filters" class="btn btn-secondary" style="padding: 0.75rem 1rem;">
+                                <i class="fas fa-times"></i> Limpar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CRM Kanban -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <div class="kanban-board" id="kanban-board"></div>
+                </div>
+                
+                <!-- Tabela de Clientes -->
                 <div class="card">
+                    <h2 style="margin-bottom: 1rem; color: #D4AF37;">Lista de Clientes</h2>
                     <div class="table-container">
                         <table class="data-table">
                             <thead>
@@ -1312,6 +1911,366 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Profile / Usuários -->
+            <div id="profile-page" class="page">
+                <div class="page-header">
+                    <h1><i class="fas fa-user-circle"></i> Perfil e Usuários</h1>
+                    <button class="btn btn-primary" id="add-user-btn">
+                        <i class="fas fa-plus"></i> Novo Usuário
+                    </button>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin-top: 2rem;">
+                    <!-- Perfil Atual -->
+                    <div class="card">
+                        <h2 style="margin-bottom: 1.5rem; color: #D4AF37;">Meu Perfil</h2>
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <div style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #D4AF37 0%, #B88A44 100%); margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #0F0F0F; font-weight: 700;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3 style="margin-top: 1rem; color: #D4AF37;" id="current-user-name">Admin</h3>
+                            <p style="color: rgba(245, 243, 239, 0.6);" id="current-user-role">Administrador</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Nome</label>
+                            <input type="text" id="profile-name" placeholder="Seu nome">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="profile-email" placeholder="seu@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone</label>
+                            <input type="text" id="profile-phone" placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="form-group">
+                            <label>Senha Atual</label>
+                            <input type="password" id="profile-current-password" placeholder="Digite sua senha atual">
+                        </div>
+                        <div class="form-group">
+                            <label>Nova Senha</label>
+                            <input type="password" id="profile-new-password" placeholder="Deixe em branco para não alterar">
+                        </div>
+                        <button class="btn btn-primary btn-block" onclick="updateProfile()">
+                            <i class="fas fa-save"></i> Atualizar Perfil
+                        </button>
+                    </div>
+
+                    <!-- Lista de Usuários -->
+                    <div class="card">
+                        <h2 style="margin-bottom: 1.5rem; color: #D4AF37;">Usuários do Sistema</h2>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Email</th>
+                                        <th>Perfil</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings -->
+            <div id="settings-page" class="page">
+                <div class="page-header">
+                    <h1><i class="fas fa-cog"></i> Configurações</h1>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 250px 1fr; gap: 2rem; margin-top: 2rem;">
+                    <!-- Menu Lateral de Configurações -->
+                    <div class="card" style="padding: 0; height: fit-content; position: sticky; top: 2rem;">
+                        <div id="settings-menu" style="padding: 0.5rem;">
+                            <button class="settings-menu-item active" data-section="general">
+                                <i class="fas fa-sliders-h"></i> Geral
+                            </button>
+                            <button class="settings-menu-item" data-section="stock">
+                                <i class="fas fa-box"></i> Estoque
+                            </button>
+                            <button class="settings-menu-item" data-section="kanban">
+                                <i class="fas fa-columns"></i> Kanban
+                            </button>
+                            <button class="settings-menu-item" data-section="notifications">
+                                <i class="fas fa-bell"></i> Notificações
+                            </button>
+                            <button class="settings-menu-item" data-section="appearance">
+                                <i class="fas fa-palette"></i> Aparência
+                            </button>
+                            <button class="settings-menu-item" data-section="security">
+                                <i class="fas fa-shield-alt"></i> Segurança
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Conteúdo das Configurações -->
+                    <div>
+                        <!-- Geral -->
+                        <div id="settings-general" class="settings-section active">
+                            <div class="card">
+                                <h2 style="margin-bottom: 1.5rem; color: #D4AF37;">Configurações Gerais</h2>
+                                
+                                <div class="form-group">
+                                    <label>Nome da Empresa</label>
+                                    <input type="text" id="setting-company-name" placeholder="CJ Emporium">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Email da Empresa</label>
+                                    <input type="email" id="setting-company-email" placeholder="contato@cjemporium.com">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Telefone da Empresa</label>
+                                    <input type="text" id="setting-company-phone" placeholder="(00) 00000-0000">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Moeda Padrão</label>
+                                    <select id="setting-currency">
+                                        <option value="BRL">Real (R$)</option>
+                                        <option value="USD">Dólar ($)</option>
+                                        <option value="EUR">Euro (€)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Fuso Horário</label>
+                                    <select id="setting-timezone">
+                                        <option value="America/Sao_Paulo">America/Sao_Paulo (GMT-3)</option>
+                                        <option value="America/New_York">America/New_York (GMT-5)</option>
+                                        <option value="Europe/London">Europe/London (GMT+0)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="setting-auto-save" style="margin-right: 0.5rem;">
+                                        Salvar automaticamente
+                                    </label>
+                                </div>
+
+                                <button class="btn btn-primary" onclick="saveSettings('general')">
+                                    <i class="fas fa-save"></i> Salvar Configurações Gerais
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Estoque -->
+                        <div id="settings-stock" class="settings-section">
+                            <div class="card">
+                                <h2 style="margin-bottom: 1.5rem; color: #D4AF37;">Configurações de Estoque</h2>
+                                
+                                <div class="form-group">
+                                    <label>Limite de Estoque Baixo (unidades)</label>
+                                    <input type="number" id="setting-low-stock-threshold" min="0" value="10">
+                                    <small style="color: rgba(245, 243, 239, 0.6); display: block; margin-top: 0.5rem;">
+                                        Produtos com estoque igual ou abaixo deste valor serão marcados como "Estoque Baixo"
+                                    </small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="setting-stock-alerts" style="margin-right: 0.5rem;">
+                                        Ativar alertas de estoque baixo
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="setting-block-sales-out-of-stock" style="margin-right: 0.5rem;">
+                                        Bloquear vendas quando estoque estiver zerado
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Método de Custo</label>
+                                    <select id="setting-cost-method">
+                                        <option value="fifo">FIFO (Primeiro a Entrar, Primeiro a Sair)</option>
+                                        <option value="average">Custo Médio</option>
+                                        <option value="lifo">LIFO (Último a Entrar, Primeiro a Sair)</option>
+                                    </select>
+                                </div>
+
+                                <button class="btn btn-primary" onclick="saveSettings('stock')">
+                                    <i class="fas fa-save"></i> Salvar Configurações de Estoque
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Kanban -->
+                        <div id="settings-kanban" class="settings-section">
+                            <div class="card">
+                                <h2 style="margin-bottom: 1.5rem; color: #D4AF37;">Configurações do Kanban</h2>
+                                
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="setting-kanban-auto-move" style="margin-right: 0.5rem;">
+                                        Mover automaticamente após venda concluída
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="setting-kanban-show-days" style="margin-right: 0.5rem;">
+                                        Mostrar dias na coluna atual
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="setting-kanban-priority-sort" style="margin-right: 0.5rem;">
+                                        Ordenar por prioridade automaticamente
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Dias para alerta de prioridade alta</label>
+                                    <input type="number" id="setting-kanban-high-priority-days" min="0" value="5">
+                                </div>
+
+                                <button class="btn btn-primary" onclick="saveSettings('kanban')">
+                                    <i class="fas fa-save"></i> Salvar Configurações do Kanban
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Notificações -->
+                        <div id="settings-notifications" class="settings-section">
+                            <div class="card">
+                                <h2 style="margin-bottom: 1.5rem; color: #D4AF37;">Configurações de Notificações</h2>
+                                
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="setting-notify-followup" style="margin-right: 0.5rem;">
+                                        Notificar sobre follow-ups vencidos
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="setting-notify-low-stock" style="margin-right: 0.5rem;">
+                                        Notificar sobre estoque baixo
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="setting-notify-new-sale" style="margin-right: 0.5rem;">
+                                        Notificar sobre novas vendas
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="setting-notify-reactivation" style="margin-right: 0.5rem;">
+                                        Notificar sobre clientes para reativar
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Frequência de verificação de notificações</label>
+                                    <select id="setting-notification-frequency">
+                                        <option value="realtime">Tempo Real</option>
+                                        <option value="5min">A cada 5 minutos</option>
+                                        <option value="15min">A cada 15 minutos</option>
+                                        <option value="1hour">A cada 1 hora</option>
+                                    </select>
+                                </div>
+
+                                <button class="btn btn-primary" onclick="saveSettings('notifications')">
+                                    <i class="fas fa-save"></i> Salvar Configurações de Notificações
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Aparência -->
+                        <div id="settings-appearance" class="settings-section">
+                            <div class="card">
+                                <h2 style="margin-bottom: 1.5rem; color: #D4AF37;">Aparência</h2>
+                                
+                                <div class="form-group">
+                                    <label>Tema</label>
+                                    <select id="setting-theme">
+                                        <option value="dark">Escuro (Padrão)</option>
+                                        <option value="light">Claro</option>
+                                        <option value="auto">Automático (Sistema)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Densidade da Interface</label>
+                                    <select id="setting-density">
+                                        <option value="comfortable">Confortável</option>
+                                        <option value="compact">Compacto</option>
+                                        <option value="spacious">Espaçoso</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="setting-show-animations" style="margin-right: 0.5rem;">
+                                        Mostrar animações
+                                    </label>
+                                </div>
+
+                                <button class="btn btn-primary" onclick="saveSettings('appearance')">
+                                    <i class="fas fa-save"></i> Salvar Configurações de Aparência
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Segurança -->
+                        <div id="settings-security" class="settings-section">
+                            <div class="card">
+                                <h2 style="margin-bottom: 1.5rem; color: #D4AF37;">Segurança</h2>
+                                
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="setting-require-password-change" style="margin-right: 0.5rem;">
+                                        Exigir alteração de senha periodicamente
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Dias para expiração de senha</label>
+                                    <input type="number" id="setting-password-expiry-days" min="0" value="90">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="setting-session-timeout" style="margin-right: 0.5rem;">
+                                        Encerrar sessão após inatividade
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Minutos de inatividade para logout</label>
+                                    <input type="number" id="setting-session-timeout-minutes" min="5" value="30">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="setting-log-all-actions" style="margin-right: 0.5rem;">
+                                        Registrar todas as ações no log
+                                    </label>
+                                </div>
+
+                                <button class="btn btn-primary" onclick="saveSettings('security')">
+                                    <i class="fas fa-save"></i> Salvar Configurações de Segurança
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -1429,6 +2388,62 @@
         </div>
     </div>
 
+    <!-- User Modal -->
+    <div id="user-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="user-modal-title">Novo Usuário</h2>
+                <button class="modal-close" data-modal="user-modal" style="color: rgba(245, 243, 239, 0.6);">&times;</button>
+            </div>
+            <form id="user-form">
+                <div class="form-group">
+                    <label>Nome *</label>
+                    <input type="text" id="user-name-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="user-email-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Telefone</label>
+                    <input type="text" id="user-phone-input" placeholder="(00) 00000-0000">
+                </div>
+                <div class="form-group">
+                    <label>Perfil *</label>
+                    <select id="user-role-input" required>
+                        <option value="">Selecione</option>
+                        <option value="admin">Administrador</option>
+                        <option value="manager">Gerente</option>
+                        <option value="seller">Vendedor</option>
+                        <option value="viewer">Visualizador</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Senha *</label>
+                    <input type="password" id="user-password-input" required>
+                    <small style="color: rgba(245, 243, 239, 0.6); display: block; margin-top: 0.5rem;">
+                        Mínimo 6 caracteres
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label>Confirmar Senha *</label>
+                    <input type="password" id="user-password-confirm-input" required>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="user-active-input" checked style="margin-right: 0.5rem;">
+                        Usuário ativo
+                    </label>
+                </div>
+                <input type="hidden" id="user-edit-id">
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" data-modal="user-modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Certificate Modal -->
     <div id="certificate-modal" class="modal">
         <div class="modal-content" style="max-width: 800px;">
@@ -1448,7 +2463,45 @@
             let products = JSON.parse(localStorage.getItem('products') || '[]');
             let sales = JSON.parse(localStorage.getItem('sales') || '[]');
             let certificates = JSON.parse(localStorage.getItem('certificates') || '[]');
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            let appSettings = JSON.parse(localStorage.getItem('appSettings') || '{}');
             let currentPage = 'dashboard'; // Página atual
+            let currentUser = null; // Usuário atual (será definido após login)
+            
+            // Criar usuário admin padrão se não existir
+            if (users.length === 0) {
+                users = [{
+                    id: 1,
+                    name: 'Admin',
+                    email: 'admin@cjemporium.com',
+                    phone: '',
+                    password: 'admin123', // Em produção, deve ser hash
+                    role: 'admin',
+                    isActive: true,
+                    createdAt: new Date().toISOString()
+                }];
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+            
+            // Inicializar currentUser
+            // Não inicializar currentUser automaticamente - apenas no login
+            // currentUser será definido apenas após login bem-sucedido
+            
+            // Remover duplicatas de produtos ao carregar
+            if (products.length > 0) {
+                const uniqueProducts = [];
+                const seenIds = new Set();
+                products.forEach(product => {
+                    if (product.id && !seenIds.has(product.id)) {
+                        seenIds.add(product.id);
+                        uniqueProducts.push(product);
+                    }
+                });
+                if (uniqueProducts.length !== products.length) {
+                    products = uniqueProducts;
+                    localStorage.setItem('products', JSON.stringify(products));
+                }
+            }
             
             // Calcular dias na coluna e follow-ups vencidos
             function updateCustomerMetrics() {
@@ -1487,27 +2540,129 @@
             { id: 7, name: 'Perdido', color: '#2B2B2B', customers: [] }
         ];
 
+        // Função para aplicar configurações de aparência
+        function applyAppearanceSettings() {
+            const body = document.body;
+            
+            // Remover classes anteriores
+            body.classList.remove('theme-light', 'theme-dark', 'theme-auto');
+            body.classList.remove('density-compact', 'density-comfortable', 'density-spacious');
+            body.classList.remove('no-animations');
+            
+            // Aplicar tema
+            const theme = appSettings.theme || 'dark';
+            if (theme === 'auto') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                body.classList.add(prefersDark ? 'theme-dark' : 'theme-light');
+            } else {
+                body.classList.add(`theme-${theme}`);
+            }
+            
+            // Aplicar densidade
+            const density = appSettings.density || 'comfortable';
+            if (density !== 'comfortable') {
+                body.classList.add(`density-${density}`);
+            }
+            
+            // Aplicar animações
+            if (appSettings.showAnimations === false) {
+                body.classList.add('no-animations');
+            }
+        }
+
         // Inicializar
         document.addEventListener('DOMContentLoaded', () => {
+            // Carregar usuário do localStorage se existir
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                } catch (e) {
+                    currentUser = null;
+                    localStorage.removeItem('currentUser');
+                }
+            }
+            
+            // Aplicar configurações de aparência ao carregar
+            applyAppearanceSettings();
+            
+            // Atualizar informações do usuário no sidebar
+            if (currentUser) {
+                document.getElementById('user-name').textContent = currentUser.name || 'Admin';
+                document.getElementById('user-role').textContent = getRoleName(currentUser.role || 'admin');
+            }
+            
             loadKanbanData();
             setupEventListeners();
-            if (localStorage.getItem('loggedIn') === 'true') {
+            if (localStorage.getItem('loggedIn') === 'true' && currentUser) {
+                // Aplicar permissões ao carregar
+                applyPermissions();
                 showApp();
                 loadPage('dashboard');
+            } else {
+                showLogin();
             }
         });
 
         function setupEventListeners() {
             document.getElementById('login-form').addEventListener('submit', (e) => {
                 e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const errorDiv = document.getElementById('login-error');
+                
+                // Buscar usuário
+                const user = users.find(u => u.email === email && u.isActive !== false);
+                
+                if (!user) {
+                    errorDiv.textContent = 'Email ou senha incorretos!';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // Validar senha (em produção, usar hash)
+                if (user.password !== password) {
+                    errorDiv.textContent = 'Email ou senha incorretos!';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // Login bem-sucedido
+                currentUser = {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone || '',
+                    role: user.role
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 localStorage.setItem('loggedIn', 'true');
+                
+                // Atualizar sidebar
+                document.getElementById('user-name').textContent = currentUser.name;
+                document.getElementById('user-role').textContent = getRoleName(currentUser.role);
+                
+                // Aplicar permissões
+                applyPermissions();
+                
+                errorDiv.style.display = 'none';
                 showApp();
                 loadPage('dashboard');
             });
 
             document.getElementById('logout-btn').addEventListener('click', () => {
-                localStorage.setItem('loggedIn', 'false');
-                showLogin();
+                if (confirm('Deseja realmente sair?')) {
+                    localStorage.setItem('loggedIn', 'false');
+                    currentUser = null;
+                    localStorage.removeItem('currentUser');
+                    // Limpar formulário de login
+                    document.getElementById('login-form').reset();
+                    document.getElementById('email').value = '';
+                    document.getElementById('password').value = '';
+                    document.getElementById('login-error').style.display = 'none';
+                    showLogin();
+                }
             });
 
             document.querySelectorAll('.nav-item').forEach(item => {
@@ -1516,13 +2671,96 @@
                 });
             });
 
-            document.getElementById('add-customer-btn')?.addEventListener('click', () => openModal('customer-modal'));
             document.getElementById('add-customer-form-btn')?.addEventListener('click', () => openModal('customer-modal'));
             document.getElementById('add-product-btn')?.addEventListener('click', () => openModal('product-modal'));
+            
+            // Menu hambúrguer mobile
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            
+            if (mobileMenuToggle && sidebar && sidebarOverlay) {
+                mobileMenuToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('active');
+                    sidebarOverlay.classList.toggle('active');
+                    mobileMenuToggle.classList.toggle('active');
+                });
+                
+                sidebarOverlay.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                    mobileMenuToggle.classList.remove('active');
+                });
+                
+                // Fechar menu ao clicar em um item (mobile)
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        if (window.innerWidth <= 768) {
+                            sidebar.classList.remove('active');
+                            sidebarOverlay.classList.remove('active');
+                            mobileMenuToggle.classList.remove('active');
+                        }
+                    });
+                });
+            }
             document.getElementById('add-sale-btn')?.addEventListener('click', () => {
                 openModal('sale-modal');
                 loadSaleForm();
             });
+            document.getElementById('add-user-btn')?.addEventListener('click', () => {
+                document.getElementById('user-modal-title').textContent = 'Novo Usuário';
+                document.getElementById('user-edit-id').value = '';
+                document.getElementById('user-form').reset();
+                document.getElementById('user-password-input').required = true;
+                document.getElementById('user-password-confirm-input').required = true;
+                document.getElementById('user-active-input').checked = true;
+                openModal('user-modal');
+            });
+
+            // Event listeners para busca e filtros de clientes
+            const customerSearch = document.getElementById('customer-search');
+            const customerFilterStatus = document.getElementById('customer-filter-status');
+            const customerFilterFollowup = document.getElementById('customer-filter-followup');
+            const clearFiltersBtn = document.getElementById('clear-filters');
+
+            if (customerSearch) {
+                customerSearch.addEventListener('input', () => {
+                    if (currentPage === 'customers') {
+                        loadKanban();
+                        loadCustomers();
+                    }
+                });
+            }
+
+            if (customerFilterStatus) {
+                customerFilterStatus.addEventListener('change', () => {
+                    if (currentPage === 'customers') {
+                        loadKanban();
+                        loadCustomers();
+                    }
+                });
+            }
+
+            if (customerFilterFollowup) {
+                customerFilterFollowup.addEventListener('change', () => {
+                    if (currentPage === 'customers') {
+                        loadKanban();
+                        loadCustomers();
+                    }
+                });
+            }
+
+            if (clearFiltersBtn) {
+                clearFiltersBtn.addEventListener('click', () => {
+                    if (customerSearch) customerSearch.value = '';
+                    if (customerFilterStatus) customerFilterStatus.value = '';
+                    if (customerFilterFollowup) customerFilterFollowup.value = '';
+                    if (currentPage === 'customers') {
+                        loadKanban();
+                        loadCustomers();
+                    }
+                });
+            }
 
             document.querySelectorAll('.modal-close, [data-modal]').forEach(btn => {
                 if (btn.type === 'button' || btn.classList.contains('modal-close')) {
@@ -1578,6 +2816,18 @@
                     cost: cost,
                     stock: parseInt(document.getElementById('product-stock').value) || 0
                 };
+                
+                // Verificar se já existe um produto com o mesmo nome e marca
+                const existingProduct = products.find(p => 
+                    p.name === product.name && 
+                    p.brand === product.brand
+                );
+                
+                if (existingProduct) {
+                    alert('Já existe um produto com este nome e marca!');
+                    return;
+                }
+                
                 products.push(product);
                 saveData();
                 closeModal('product-modal');
@@ -1661,19 +2911,103 @@
             });
 
             document.getElementById('add-sale-item').addEventListener('click', addSaleItem);
+
+            // Formulário de usuários
+            document.getElementById('user-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const editId = document.getElementById('user-edit-id').value;
+                const name = document.getElementById('user-name-input').value;
+                const email = document.getElementById('user-email-input').value;
+                const phone = document.getElementById('user-phone-input').value;
+                const role = document.getElementById('user-role-input').value;
+                const password = document.getElementById('user-password-input').value;
+                const passwordConfirm = document.getElementById('user-password-confirm-input').value;
+                const isActive = document.getElementById('user-active-input').checked;
+                
+                if (!name || !email || !role) {
+                    alert('Preencha todos os campos obrigatórios!');
+                    return;
+                }
+                
+                // Validar senha apenas se for novo usuário ou se estiver alterando
+                if (!editId || password) {
+                    if (!password || password.length < 6) {
+                        alert('A senha deve ter no mínimo 6 caracteres!');
+                        return;
+                    }
+                    if (password !== passwordConfirm) {
+                        alert('As senhas não coincidem!');
+                        return;
+                    }
+                }
+                
+                // Verificar se email já existe (exceto se for edição do mesmo usuário)
+                const existingUser = users.find(u => u.email === email && u.id !== parseInt(editId));
+                if (existingUser) {
+                    alert('Este email já está cadastrado!');
+                    return;
+                }
+                
+                if (editId) {
+                    // Editar usuário existente
+                    const userIndex = users.findIndex(u => u.id === parseInt(editId));
+                    if (userIndex !== -1) {
+                        users[userIndex].name = name;
+                        users[userIndex].email = email;
+                        users[userIndex].phone = phone;
+                        users[userIndex].role = role;
+                        users[userIndex].isActive = isActive;
+                        if (password) {
+                            users[userIndex].password = password; // Em produção, usar hash
+                        }
+                        users[userIndex].updatedAt = new Date().toISOString();
+                    }
+                } else {
+                    // Novo usuário
+                    const newUser = {
+                        id: Date.now(),
+                        name,
+                        email,
+                        phone,
+                        password, // Em produção, usar hash
+                        role,
+                        isActive,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    };
+                    users.push(newUser);
+                }
+                
+                saveData();
+                closeModal('user-modal');
+                loadUsers();
+                alert(editId ? 'Usuário atualizado com sucesso!' : 'Usuário criado com sucesso!');
+            });
         }
 
         function showLogin() {
             document.getElementById('login-screen').classList.add('active');
             document.getElementById('app-screen').classList.remove('active');
+            // Limpar qualquer estado da aplicação
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
         }
 
         function showApp() {
             document.getElementById('login-screen').classList.remove('active');
             document.getElementById('app-screen').classList.add('active');
+            // Aplicar permissões ao mostrar app
+            if (currentUser) {
+                applyPermissions();
+            }
         }
 
         function loadPage(page) {
+            // Verificar permissão antes de carregar a página
+            if (!checkPagePermission(page)) {
+                return;
+            }
+            
             currentPage = page; // Atualizar página atual
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
@@ -1682,14 +3016,21 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(`${page}-page`).classList.add('active');
             
+            // Aplicar permissões novamente ao mudar de página
+            applyPermissions();
+            
             switch(page) {
                 case 'dashboard': loadDashboard(); break;
-                case 'kanban': loadKanban(); break;
-                case 'customers': loadCustomers(); break;
+                case 'customers': 
+                    loadKanban(); 
+                    loadCustomers(); 
+                    break;
                 case 'products': loadProducts(); break;
                 case 'sales': loadSales(); break;
                 case 'financial': loadFinancial(); break;
                 case 'recurrence': loadRecurrence(); break;
+                case 'profile': loadProfile(); break;
+                case 'settings': loadSettings(); break;
             }
         }
 
@@ -1722,9 +3063,45 @@
             }
         }
 
+        function filterCustomers() {
+            const searchTerm = (document.getElementById('customer-search')?.value || '').toLowerCase();
+            const statusFilter = document.getElementById('customer-filter-status')?.value || '';
+            const followupFilter = document.getElementById('customer-filter-followup')?.value || '';
+            
+            return customers.filter(customer => {
+                // Busca por nome, telefone ou email
+                const matchesSearch = !searchTerm || 
+                    customer.name?.toLowerCase().includes(searchTerm) ||
+                    customer.phone?.toLowerCase().includes(searchTerm) ||
+                    customer.email?.toLowerCase().includes(searchTerm);
+                
+                // Filtro por status
+                const matchesStatus = !statusFilter || customer.status === statusFilter;
+                
+                // Filtro por follow-up
+                let matchesFollowup = true;
+                if (followupFilter) {
+                    const now = new Date();
+                    if (followupFilter === 'overdue') {
+                        matchesFollowup = customer.followup_overdue === true;
+                    } else if (followupFilter === 'today' && customer.next_followup_date) {
+                        const followupDate = new Date(customer.next_followup_date);
+                        matchesFollowup = followupDate.toDateString() === now.toDateString();
+                    } else if (followupFilter === 'week' && customer.next_followup_date) {
+                        const followupDate = new Date(customer.next_followup_date);
+                        const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+                        matchesFollowup = followupDate >= now && followupDate <= weekFromNow;
+                    }
+                }
+                
+                return matchesSearch && matchesStatus && matchesFollowup;
+            });
+        }
+
         function loadKanbanData() {
             kanbanColumns.forEach(col => col.customers = []);
-            customers.forEach(customer => {
+            const filteredCustomers = filterCustomers();
+            filteredCustomers.forEach(customer => {
                 const col = kanbanColumns.find(c => c.id === customer.kanbanColumnId || c.id === 1);
                 if (col) col.customers.push(customer);
             });
@@ -1733,6 +3110,7 @@
         function loadKanban() {
             loadKanbanData();
             const board = document.getElementById('kanban-board');
+            if (!board) return;
             board.innerHTML = '';
             
             kanbanColumns.forEach(column => {
@@ -1889,12 +3267,17 @@
 
         function loadCustomers() {
             const tbody = document.getElementById('customers-table-body');
+            if (!tbody) return;
             tbody.innerHTML = '';
-            if (customers.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Nenhum cliente cadastrado</td></tr>';
+            
+            const filteredCustomers = filterCustomers();
+            
+            if (filteredCustomers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Nenhum cliente encontrado</td></tr>';
                 return;
             }
-            customers.forEach(customer => {
+            
+            filteredCustomers.forEach(customer => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${customer.name}</td>
@@ -1913,14 +3296,47 @@
 
         function loadProducts() {
             const grid = document.getElementById('products-grid');
+            if (!grid) return;
+            
+            // Remover duplicatas baseado no ID
+            const uniqueProducts = [];
+            const seenIds = new Set();
+            products.forEach(product => {
+                if (!seenIds.has(product.id)) {
+                    seenIds.add(product.id);
+                    uniqueProducts.push(product);
+                }
+            });
+            
+            // Atualizar o array de produtos se houver duplicatas
+            if (uniqueProducts.length !== products.length) {
+                products = uniqueProducts;
+                saveData();
+            }
+            
             grid.innerHTML = '';
             if (products.length === 0) {
                 grid.innerHTML = '<div class="empty-state">Nenhum produto cadastrado</div>';
                 return;
             }
+            
+            // Definir limite de estoque baixo das configurações (padrão: 10 unidades)
+            const lowStockThreshold = (appSettings && appSettings.lowStockThreshold) || 10;
+            
             products.forEach(product => {
                 const card = document.createElement('div');
                 card.className = 'product-card';
+                
+                const stock = product.stock || 0;
+                const isLowStock = stock <= lowStockThreshold;
+                const isOutOfStock = stock === 0;
+                
+                // Adicionar classe para estoque baixo
+                if (isOutOfStock) {
+                    card.classList.add('out-of-stock');
+                } else if (isLowStock) {
+                    card.classList.add('low-stock');
+                }
                 
                 let marginHtml = '';
                 if (product.cost && product.price) {
@@ -1933,7 +3349,26 @@
                     `;
                 }
                 
+                // Alerta de estoque
+                let stockAlertHtml = '';
+                if (isOutOfStock) {
+                    stockAlertHtml = `
+                        <div style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); border-radius: 6px; padding: 0.5rem; margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i>
+                            <span style="color: #ef4444; font-size: 0.875rem; font-weight: 500;">ESGOTADO</span>
+                        </div>
+                    `;
+                } else if (isLowStock) {
+                    stockAlertHtml = `
+                        <div style="background: rgba(251, 191, 36, 0.2); border: 1px solid rgba(251, 191, 36, 0.5); border-radius: 6px; padding: 0.5rem; margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-exclamation-circle" style="color: #fbbf24;"></i>
+                            <span style="color: #fbbf24; font-size: 0.875rem; font-weight: 500;">ESTOQUE BAIXO</span>
+                        </div>
+                    `;
+                }
+                
                 card.innerHTML = `
+                    ${isLowStock ? '<div style="position: absolute; top: 8px; right: 8px; background: ' + (isOutOfStock ? '#ef4444' : '#fbbf24') + '; color: #0F0F0F; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">' + (isOutOfStock ? 'ESGOTADO' : 'BAIXO') + '</div>' : ''}
                     <h3>${product.name}</h3>
                     ${product.brand ? `<p style="color: rgba(245, 243, 239, 0.6); font-size: 0.875rem;">${product.brand}</p>` : ''}
                     <div class="product-info">
@@ -1949,8 +3384,9 @@
                     ${marginHtml}
                     <div class="product-info">
                         <span>Estoque:</span>
-                        <strong>${product.stock || 0} unidades</strong>
+                        <strong style="color: ${isOutOfStock ? '#ef4444' : isLowStock ? '#fbbf24' : '#D4AF37'};">${stock} unidades</strong>
                     </div>
+                    ${stockAlertHtml}
                 `;
                 grid.appendChild(card);
             });
@@ -2080,9 +3516,14 @@
             localStorage.setItem('products', JSON.stringify(products));
             localStorage.setItem('sales', JSON.stringify(sales));
             localStorage.setItem('certificates', JSON.stringify(certificates));
+            localStorage.setItem('users', JSON.stringify(users));
         }
 
         function deleteCustomer(id) {
+            if (!hasPermission('delete_customers')) {
+                alert('Você não tem permissão para excluir clientes!');
+                return;
+            }
             if (confirm('Deseja realmente excluir este cliente?')) {
                 customers = customers.filter(c => c.id !== id);
                 saveData();
@@ -3046,6 +4487,350 @@ Este certificado confirma a autenticidade e procedência do produto, refletindo 
             const phone = customer.phone.replace(/\D/g, '');
             window.open(`https://wa.me/55${phone}?text=${message}`, '_blank');
         }
+
+        // Configurações
+        function loadSettings() {
+            // Carregar valores salvos
+            document.getElementById('setting-company-name').value = appSettings.companyName || 'CJ Emporium';
+            document.getElementById('setting-company-email').value = appSettings.companyEmail || '';
+            document.getElementById('setting-company-phone').value = appSettings.companyPhone || '';
+            document.getElementById('setting-currency').value = appSettings.currency || 'BRL';
+            document.getElementById('setting-timezone').value = appSettings.timezone || 'America/Sao_Paulo';
+            document.getElementById('setting-auto-save').checked = appSettings.autoSave !== false;
+
+            document.getElementById('setting-low-stock-threshold').value = appSettings.lowStockThreshold || 10;
+            document.getElementById('setting-stock-alerts').checked = appSettings.stockAlerts !== false;
+            document.getElementById('setting-block-sales-out-of-stock').checked = appSettings.blockSalesOutOfStock || false;
+            document.getElementById('setting-cost-method').value = appSettings.costMethod || 'fifo';
+
+            document.getElementById('setting-kanban-auto-move').checked = appSettings.kanbanAutoMove !== false;
+            document.getElementById('setting-kanban-show-days').checked = appSettings.kanbanShowDays !== false;
+            document.getElementById('setting-kanban-priority-sort').checked = appSettings.kanbanPrioritySort !== false;
+            document.getElementById('setting-kanban-high-priority-days').value = appSettings.kanbanHighPriorityDays || 5;
+
+            document.getElementById('setting-notify-followup').checked = appSettings.notifyFollowup !== false;
+            document.getElementById('setting-notify-low-stock').checked = appSettings.notifyLowStock !== false;
+            document.getElementById('setting-notify-new-sale').checked = appSettings.notifyNewSale || false;
+            document.getElementById('setting-notify-reactivation').checked = appSettings.notifyReactivation !== false;
+            document.getElementById('setting-notification-frequency').value = appSettings.notificationFrequency || 'realtime';
+
+            document.getElementById('setting-theme').value = appSettings.theme || 'dark';
+            document.getElementById('setting-density').value = appSettings.density || 'comfortable';
+            document.getElementById('setting-show-animations').checked = appSettings.showAnimations !== false;
+
+            document.getElementById('setting-require-password-change').checked = appSettings.requirePasswordChange || false;
+            document.getElementById('setting-password-expiry-days').value = appSettings.passwordExpiryDays || 90;
+            document.getElementById('setting-session-timeout').checked = appSettings.sessionTimeout || false;
+            document.getElementById('setting-session-timeout-minutes').value = appSettings.sessionTimeoutMinutes || 30;
+            document.getElementById('setting-log-all-actions').checked = appSettings.logAllActions || false;
+
+            // Aplicar configurações de aparência
+            applyAppearanceSettings();
+
+            // Menu lateral
+            document.querySelectorAll('.settings-menu-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const section = item.dataset.section;
+                    document.querySelectorAll('.settings-menu-item').forEach(i => i.classList.remove('active'));
+                    document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+                    item.classList.add('active');
+                    document.getElementById(`settings-${section}`).classList.add('active');
+                });
+            });
+        }
+
+        function saveSettings(section) {
+            if (section === 'general') {
+                appSettings.companyName = document.getElementById('setting-company-name').value;
+                appSettings.companyEmail = document.getElementById('setting-company-email').value;
+                appSettings.companyPhone = document.getElementById('setting-company-phone').value;
+                appSettings.currency = document.getElementById('setting-currency').value;
+                appSettings.timezone = document.getElementById('setting-timezone').value;
+                appSettings.autoSave = document.getElementById('setting-auto-save').checked;
+            } else if (section === 'stock') {
+                appSettings.lowStockThreshold = parseInt(document.getElementById('setting-low-stock-threshold').value) || 10;
+                appSettings.stockAlerts = document.getElementById('setting-stock-alerts').checked;
+                appSettings.blockSalesOutOfStock = document.getElementById('setting-block-sales-out-of-stock').checked;
+                appSettings.costMethod = document.getElementById('setting-cost-method').value;
+                // Atualizar função loadProducts para usar o novo limite
+                if (currentPage === 'products') loadProducts();
+            } else if (section === 'kanban') {
+                appSettings.kanbanAutoMove = document.getElementById('setting-kanban-auto-move').checked;
+                appSettings.kanbanShowDays = document.getElementById('setting-kanban-show-days').checked;
+                appSettings.kanbanPrioritySort = document.getElementById('setting-kanban-priority-sort').checked;
+                appSettings.kanbanHighPriorityDays = parseInt(document.getElementById('setting-kanban-high-priority-days').value) || 5;
+            } else if (section === 'notifications') {
+                appSettings.notifyFollowup = document.getElementById('setting-notify-followup').checked;
+                appSettings.notifyLowStock = document.getElementById('setting-notify-low-stock').checked;
+                appSettings.notifyNewSale = document.getElementById('setting-notify-new-sale').checked;
+                appSettings.notifyReactivation = document.getElementById('setting-notify-reactivation').checked;
+                appSettings.notificationFrequency = document.getElementById('setting-notification-frequency').value;
+            } else if (section === 'appearance') {
+                appSettings.theme = document.getElementById('setting-theme').value;
+                appSettings.density = document.getElementById('setting-density').value;
+                appSettings.showAnimations = document.getElementById('setting-show-animations').checked;
+                // Aplicar imediatamente
+                applyAppearanceSettings();
+            } else if (section === 'security') {
+                appSettings.requirePasswordChange = document.getElementById('setting-require-password-change').checked;
+                appSettings.passwordExpiryDays = parseInt(document.getElementById('setting-password-expiry-days').value) || 90;
+                appSettings.sessionTimeout = document.getElementById('setting-session-timeout').checked;
+                appSettings.sessionTimeoutMinutes = parseInt(document.getElementById('setting-session-timeout-minutes').value) || 30;
+                appSettings.logAllActions = document.getElementById('setting-log-all-actions').checked;
+            }
+
+            localStorage.setItem('appSettings', JSON.stringify(appSettings));
+            
+            // Mostrar mensagem de sucesso
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Salvo!';
+            btn.style.background = '#10b981';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '';
+            }, 2000);
+        }
+
+        // Sistema de Permissões
+        function hasPermission(permission) {
+            if (!currentUser) return false;
+            
+            const role = currentUser.role || 'viewer';
+            
+            // Admin tem todas as permissões
+            if (role === 'admin') return true;
+            
+            // Definir permissões por role
+            const permissions = {
+                'manager': [
+                    'view_dashboard', 'view_customers', 'view_kanban', 'view_products', 
+                    'view_sales', 'view_financial', 'view_settings', 'view_users',
+                    'create_customers', 'edit_customers', 'create_products', 'edit_products',
+                    'create_sales', 'edit_sales', 'edit_financial', 'edit_settings',
+                    'create_users', 'edit_users', 'move_kanban'
+                ],
+                'seller': [
+                    'view_dashboard', 'view_customers', 'view_kanban', 'view_products', 
+                    'view_sales', 'create_customers', 'edit_customers', 'move_kanban',
+                    'create_products', 'create_sales'
+                ],
+                'viewer': [
+                    'view_dashboard', 'view_customers', 'view_kanban', 'view_products', 
+                    'view_sales', 'view_financial'
+                ]
+            };
+            
+            return permissions[role]?.includes(permission) || false;
+        }
+
+        function applyPermissions() {
+            if (!currentUser) return;
+            
+            // Esconder/mostrar itens do menu baseado em permissões
+            document.querySelectorAll('.nav-item[data-permission]').forEach(item => {
+                const permission = item.dataset.permission;
+                if (hasPermission(permission)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Esconder botões de ação baseado em permissões
+            const page = currentPage;
+            
+            // Botões de criar - mostrar todos primeiro, depois esconder conforme permissão
+            const addCustomerBtn = document.getElementById('add-customer-form-btn');
+            if (addCustomerBtn) {
+                addCustomerBtn.style.display = hasPermission('create_customers') ? '' : 'none';
+            }
+            
+            const addProductBtn = document.getElementById('add-product-btn');
+            if (addProductBtn) {
+                addProductBtn.style.display = hasPermission('create_products') ? '' : 'none';
+            }
+            
+            const addSaleBtn = document.getElementById('add-sale-btn');
+            if (addSaleBtn) {
+                addSaleBtn.style.display = hasPermission('create_sales') ? '' : 'none';
+            }
+            
+            const addUserBtn = document.getElementById('add-user-btn');
+            if (addUserBtn) {
+                addUserBtn.style.display = hasPermission('create_users') ? '' : 'none';
+            }
+        }
+
+        function checkPagePermission(page) {
+            const pagePermissions = {
+                'dashboard': 'view_dashboard',
+                'customers': 'view_customers',
+                'products': 'view_products',
+                'sales': 'view_sales',
+                'financial': 'view_financial',
+                'recurrence': 'view_customers',
+                'profile': 'view_users',
+                'settings': 'view_settings'
+            };
+            
+            const requiredPermission = pagePermissions[page];
+            if (requiredPermission && !hasPermission(requiredPermission)) {
+                alert('Você não tem permissão para acessar esta página!');
+                loadPage('dashboard');
+                return false;
+            }
+            return true;
+        }
+
+        // Funções de Perfil e Usuários
+        function loadProfile() {
+            // Carregar dados do usuário atual
+            document.getElementById('current-user-name').textContent = currentUser.name || 'Admin';
+            document.getElementById('current-user-role').textContent = getRoleName(currentUser.role || 'admin');
+            document.getElementById('profile-name').value = currentUser.name || '';
+            document.getElementById('profile-email').value = currentUser.email || '';
+            document.getElementById('profile-phone').value = currentUser.phone || '';
+            
+            // Carregar lista de usuários (apenas se tiver permissão)
+            if (hasPermission('view_users')) {
+                loadUsers();
+            }
+        }
+
+        function loadUsers() {
+            const tbody = document.getElementById('users-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Nenhum usuário cadastrado</td></tr>';
+                return;
+            }
+            
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td><span class="status-badge">${getRoleName(user.role)}</span></td>
+                    <td><span class="status-badge ${user.isActive ? 'cliente' : 'perdido'}">${user.isActive ? 'Ativo' : 'Inativo'}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="editUser(${user.id})" style="margin-right: 0.5rem;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        ${user.id !== currentUser.id ? `
+                        <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        ` : '<span style="color: rgba(245, 243, 239, 0.5); font-size: 0.875rem;">Você</span>'}
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function getRoleName(role) {
+            const roles = {
+                'admin': 'Administrador',
+                'manager': 'Gerente',
+                'seller': 'Vendedor',
+                'viewer': 'Visualizador'
+            };
+            return roles[role] || role;
+        }
+
+        function updateProfile() {
+            const name = document.getElementById('profile-name').value;
+            const email = document.getElementById('profile-email').value;
+            const phone = document.getElementById('profile-phone').value;
+            const currentPassword = document.getElementById('profile-current-password').value;
+            const newPassword = document.getElementById('profile-new-password').value;
+            
+            if (!name || !email) {
+                alert('Nome e email são obrigatórios!');
+                return;
+            }
+            
+            // Verificar senha atual se estiver alterando senha
+            if (newPassword) {
+                if (!currentPassword) {
+                    alert('Digite a senha atual para alterar a senha!');
+                    return;
+                }
+                if (newPassword.length < 6) {
+                    alert('A nova senha deve ter no mínimo 6 caracteres!');
+                    return;
+                }
+            }
+            
+            // Atualizar usuário atual
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                users[userIndex].name = name;
+                users[userIndex].email = email;
+                users[userIndex].phone = phone;
+                if (newPassword) {
+                    users[userIndex].password = newPassword; // Em produção, usar hash
+                }
+            }
+            
+            // Atualizar currentUser
+            currentUser.name = name;
+            currentUser.email = email;
+            currentUser.phone = phone;
+            
+            // Atualizar exibição
+            document.getElementById('user-name').textContent = name;
+            
+            saveData();
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            loadProfile();
+            
+            // Limpar campos de senha
+            document.getElementById('profile-current-password').value = '';
+            document.getElementById('profile-new-password').value = '';
+            
+            alert('Perfil atualizado com sucesso!');
+        }
+
+        function editUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+            
+            document.getElementById('user-modal-title').textContent = 'Editar Usuário';
+            document.getElementById('user-edit-id').value = userId;
+            document.getElementById('user-name-input').value = user.name;
+            document.getElementById('user-email-input').value = user.email;
+            document.getElementById('user-phone-input').value = user.phone || '';
+            document.getElementById('user-role-input').value = user.role;
+            document.getElementById('user-active-input').checked = user.isActive !== false;
+            document.getElementById('user-password-input').required = false;
+            document.getElementById('user-password-confirm-input').required = false;
+            
+            openModal('user-modal');
+        }
+
+        function deleteUser(userId) {
+            if (userId === currentUser.id) {
+                alert('Você não pode excluir seu próprio usuário!');
+                return;
+            }
+            
+            if (!confirm('Tem certeza que deseja excluir este usuário?')) {
+                return;
+            }
+            
+            users = users.filter(u => u.id !== userId);
+            saveData();
+            loadUsers();
+        }
+
+        window.updateProfile = updateProfile;
+        window.editUser = editUser;
+        window.deleteUser = deleteUser;
+
+        window.saveSettings = saveSettings;
 
         window.viewCertificates = viewCertificates;
         window.downloadCertificateCompact = downloadCertificateCompact;
