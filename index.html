@@ -5918,17 +5918,58 @@
                         </div>
                     </div>
                     <div class="invoice-card-mobile-actions">
-                        <button class="btn btn-primary" onclick="generateInvoice(${sale.id})" style="flex: 1;">
+                        <button class="btn btn-primary" data-action="generate" data-sale-id="${sale.id}" style="flex: 1;">
                             <i class="fas fa-file-invoice"></i> Gerar Cobrança
                         </button>
-                        <button class="btn btn-secondary" onclick="viewSaleDetails(${sale.id})" style="flex: 1;">
+                        <button class="btn btn-secondary" data-action="view" data-sale-id="${sale.id}" style="flex: 1;">
                             <i class="fas fa-eye"></i> Detalhes
                         </button>
                     </div>
                 `;
+                
+                // Adicionar event listeners aos botões
+                const generateBtn = card.querySelector('[data-action="generate"]');
+                const viewBtn = card.querySelector('[data-action="view"]');
+                
+                if (generateBtn) {
+                    generateBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const saleId = parseInt(this.getAttribute('data-sale-id'));
+                        if (typeof window.generateInvoice === 'function') {
+                            window.generateInvoice(saleId);
+                        } else if (typeof generateInvoice === 'function') {
+                            generateInvoice(saleId);
+                        } else {
+                            console.error('generateInvoice não está definida');
+                            alert('Erro: Função de gerar cobrança não encontrada');
+                        }
+                    });
+                }
+                
+                if (viewBtn) {
+                    viewBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const saleId = parseInt(this.getAttribute('data-sale-id'));
+                        if (typeof window.viewSaleDetails === 'function') {
+                            window.viewSaleDetails(saleId);
+                        } else if (typeof viewSaleDetails === 'function') {
+                            viewSaleDetails(saleId);
+                        } else {
+                            console.error('viewSaleDetails não está definida');
+                            alert('Erro: Função de visualizar detalhes não encontrada');
+                        }
+                    });
+                }
+                
                 cardsContainer.appendChild(card);
             });
         }
+        
+        // Expor funções globalmente para uso em onclick
+        window.generateInvoice = generateInvoice;
+        window.viewSaleDetails = viewSaleDetails;
         
         function loadSales() {
             const tbody = document.getElementById('sales-table-body');
@@ -6334,6 +6375,10 @@
         
         // Variável global para armazenar ID da venda atual no modal de cobrança
         let currentInvoiceSaleId = null;
+        
+        // Expor funções globalmente para uso em onclick e event listeners
+        window.generateInvoice = generateInvoice;
+        window.viewSaleDetails = viewSaleDetails;
         
         // Função para confirmar geração de cobrança
         function confirmGenerateInvoice() {
@@ -8252,6 +8297,8 @@ Este certificado confirma a autenticidade e procedência do produto, refletindo 
         }
         
         window.viewCustomerLoyalty = viewCustomerLoyalty;
+        window.generateInvoice = generateInvoice;
+        window.viewSaleDetails = viewSaleDetails;
         
         // Event listener do formulário de fidelidade
         document.getElementById('loyalty-form')?.addEventListener('submit', (e) => {
