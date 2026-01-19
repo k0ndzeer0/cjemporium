@@ -1327,6 +1327,24 @@
 
         /* Responsive */
         /* Responsividade Mobile */
+        @media (max-width: 1024px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .kanban-column {
+                min-width: 250px;
+            }
+        }
+        
         @media (max-width: 768px) {
             #app-screen {
                 position: relative;
@@ -1468,6 +1486,28 @@
             .settings-content {
                 width: 100%;
             }
+            
+            /* Tabelas com scroll horizontal */
+            .overflow-x-auto {
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+            }
+            
+            /* Cards de ação em linha */
+            .btn-sm {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+            }
+            
+            /* Ajustes de espaçamento */
+            .card {
+                margin-bottom: 1rem;
+            }
+            
+            /* Formulários em coluna */
+            .form-row {
+                gap: 0.75rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1498,6 +1538,86 @@
 
             .modal-header h2 {
                 font-size: 1.25rem;
+            }
+            
+            /* Ajustes adicionais para mobile */
+            .sidebar-overlay {
+                display: block;
+            }
+            
+            .sidebar.active ~ .sidebar-overlay {
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            /* Tabelas com scroll horizontal melhorado */
+            .data-table {
+                font-size: 0.75rem;
+            }
+            
+            .data-table th,
+            .data-table td {
+                padding: 0.5rem;
+            }
+            
+            /* Botões em ações menores */
+            .btn-sm {
+                padding: 0.375rem 0.5rem;
+                font-size: 0.7rem;
+            }
+            
+            /* Cards de estatísticas menores */
+            .stat-card {
+                padding: 0.75rem;
+            }
+            
+            .stat-value {
+                font-size: 1.25rem;
+            }
+            
+            .stat-label {
+                font-size: 0.75rem;
+            }
+            
+            /* Formulários mais compactos */
+            .form-group {
+                margin-bottom: 0.75rem;
+            }
+            
+            input, select, textarea {
+                padding: 0.625rem;
+                font-size: 0.875rem;
+            }
+            
+            /* Kanban cards menores */
+            .kanban-card {
+                padding: 0.625rem;
+                font-size: 0.8rem;
+            }
+            
+            /* Grid de produtos em 1 coluna */
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            /* Page header mais compacto */
+            .page-header {
+                margin-bottom: 1rem;
+            }
+            
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            /* Cards com menos padding */
+            .card {
+                padding: 0.75rem;
+            }
+            
+            /* Ajustes de espaçamento geral */
+            .main-content {
+                padding: 0.75rem;
             }
 
             .modal-close {
@@ -1758,6 +1878,9 @@
                 <a class="nav-item" data-page="sales" data-permission="view_sales">
                     <i class="fas fa-shopping-cart"></i> <span>Vendas</span>
                 </a>
+                <a class="nav-item" data-page="invoices" data-permission="view_sales">
+                    <i class="fas fa-file-invoice"></i> <span>Cobranças</span>
+                </a>
                 <a class="nav-item" data-page="financial" data-permission="view_financial">
                     <i class="fas fa-chart-pie"></i> <span>Financeiro</span>
                 </a>
@@ -1937,12 +2060,48 @@
                                     <th>Número</th>
                                     <th>Cliente</th>
                                     <th>Valor</th>
+                                    <th>Pagamento</th>
                                     <th>Status</th>
                                     <th>Data</th>
-                                    <th>Certificados</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="sales-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invoices (Cobranças) -->
+            <div id="invoices-page" class="page">
+                <div class="page-header">
+                    <h1>Cobranças e Comprovantes</h1>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <select id="invoice-filter" style="padding: 0.625rem 1rem; border: 1px solid rgba(184, 138, 68, 0.3); border-radius: 8px; background: #0F0F0F; color: #F5F3EF; font-size: 0.9375rem; cursor: pointer;">
+                            <option value="all">Todas</option>
+                            <option value="pending">Pendentes</option>
+                            <option value="overdue">Vencidas</option>
+                            <option value="this-month">Este Mês</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="overflow-x-auto">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Número</th>
+                                    <th>Cliente</th>
+                                    <th>Valor Total</th>
+                                    <th>Forma de Pagamento</th>
+                                    <th>Parcelas</th>
+                                    <th>Próximo Vencimento</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoices-table-body"></tbody>
                         </table>
                     </div>
                 </div>
@@ -2633,6 +2792,33 @@
                 </div>
                 </div>
                 
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                    <label>Gênero/Sexo *</label>
+                    <select id="product-gender" required>
+                        <option value="">Selecione</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="feminino">Feminino</option>
+                        <option value="unissex">Unissex</option>
+                    </select>
+                </div>
+                    <div class="form-group" style="flex: 1;">
+                    <label>Lote</label>
+                    <input type="text" id="product-batch" placeholder="Número do lote">
+                </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                    <label>Origem</label>
+                    <input type="text" id="product-origin" placeholder="País de origem">
+                </div>
+                    <div class="form-group" style="flex: 1;">
+                    <label>Fragrância</label>
+                    <input type="text" id="product-fragrance" placeholder="Descrição da fragrância">
+                </div>
+                </div>
+                
                 <!-- Catálogo de Fragrâncias -->
                 <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 8px; padding: 1rem; margin: 1rem 0;">
                     <h3 style="color: #D4AF37; margin-bottom: 1rem; font-size: 1rem;">Catálogo de Fragrâncias</h3>
@@ -2704,16 +2890,6 @@
                 
                 <div class="form-row">
                     <div class="form-group" style="flex: 1;">
-                    <label>Lote</label>
-                    <input type="text" id="product-batch" placeholder="Número do lote">
-                </div>
-                    <div class="form-group" style="flex: 1;">
-                    <label>Origem</label>
-                    <input type="text" id="product-origin" placeholder="País de origem">
-                </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group" style="flex: 1;">
                     <label>Preço *</label>
                     <input type="number" step="0.01" id="product-price" required>
                 </div>
@@ -2776,11 +2952,108 @@
                         <span id="sale-total">R$ 0,00</span>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label>Como foi feita a venda</label>
+                    <select id="sale-method">
+                        <option value="presencial">Presencial</option>
+                        <option value="online">Online</option>
+                        <option value="telefone">Telefone</option>
+                        <option value="whatsapp">WhatsApp</option>
+                        <option value="email">E-mail</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+                <div class="form-group" id="sale-method-details-group" style="display: none;">
+                    <label>Detalhes da venda</label>
+                    <textarea id="sale-method-details" rows="2" placeholder="Descreva como foi feita a venda..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Forma de Pagamento</label>
+                    <select id="sale-payment-type" onchange="togglePaymentFields()">
+                        <option value="dinheiro">Dinheiro</option>
+                        <option value="pix">PIX</option>
+                        <option value="cartao">Cartão de Crédito/Débito</option>
+                        <option value="fonte">Fonte</option>
+                        <option value="promissoria">Promissória</option>
+                    </select>
+                </div>
+                <div class="form-group" id="payment-installments-group" style="display: none;">
+                    <label>Número de Parcelas</label>
+                    <input type="number" id="sale-payment-installments" min="1" value="1" onchange="calculateInstallments()">
+                </div>
+                <div class="form-group" id="payment-due-date-group" style="display: none;">
+                    <label>Data de Vencimento (Primeira Parcela)</label>
+                    <input type="date" id="sale-payment-due-date">
+                </div>
+                <div class="form-group">
+                    <label>Observações</label>
+                    <textarea id="sale-notes" rows="2" placeholder="Observações adicionais..."></textarea>
+                </div>
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" data-modal="sale-modal">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Finalizar</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Sale Details Modal -->
+    <div id="sale-details-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2>Detalhes da Venda</h2>
+                <button class="modal-close" data-modal="sale-details-modal" style="color: rgba(245, 243, 239, 0.6);">&times;</button>
+            </div>
+            <div id="sale-details-content" style="padding: 1.5rem;">
+                <!-- Conteúdo será preenchido dinamicamente -->
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" data-modal="sale-details-modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="btn-generate-invoice-from-details" style="display: none;">
+                    <i class="fas fa-file-invoice"></i> Gerar Cobrança
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate Invoice Modal -->
+    <div id="invoice-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>Gerar Cobrança</h2>
+                <button class="modal-close" data-modal="invoice-modal" style="color: rgba(245, 243, 239, 0.6);">&times;</button>
+            </div>
+            <div id="invoice-content" style="padding: 1.5rem;">
+                <div class="form-group">
+                    <label>Tipo de Cobrança</label>
+                    <select id="invoice-type">
+                        <option value="all">Todas as Parcelas</option>
+                        <option value="next">Próxima Parcela</option>
+                        <option value="custom">Parcela Específica</option>
+                    </select>
+                </div>
+                <div class="form-group" id="invoice-custom-parcel" style="display: none;">
+                    <label>Número da Parcela</label>
+                    <input type="number" id="invoice-parcel-number" min="1" value="1">
+                </div>
+                <div class="form-group">
+                    <label>Formato</label>
+                    <select id="invoice-format">
+                        <option value="pdf">PDF</option>
+                        <option value="print">Imprimir</option>
+                        <option value="email">Enviar por E-mail</option>
+                    </select>
+                </div>
+                <div id="invoice-preview" style="margin-top: 1rem; padding: 1rem; background: rgba(212, 175, 55, 0.1); border-radius: 8px; display: none;">
+                    <!-- Preview da cobrança -->
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" data-modal="invoice-modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="confirmGenerateInvoice()">
+                    <i class="fas fa-file-invoice"></i> Gerar Cobrança
+                </button>
+            </div>
         </div>
     </div>
 
@@ -3046,6 +3319,7 @@
             let sales = [];
             let certificates = [];
             let users = JSON.parse(localStorage.getItem('users') || '[]'); // Users ainda em localStorage
+            let appliedCoupon = null; // Variável global para cupom aplicado na venda
             let appSettings = JSON.parse(localStorage.getItem('appSettings') || '{}'); // Settings ainda em localStorage
             let coupons = [];
             let loyaltyProgram = {};
@@ -3506,31 +3780,65 @@
                 }
             });
 
-            document.getElementById('customer-form').addEventListener('submit', (e) => {
+            document.getElementById('customer-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const customer = {
-                    id: Date.now(),
+                
+                const customerData = {
                     name: document.getElementById('customer-name').value,
-                    phone: document.getElementById('customer-phone').value,
-                    email: document.getElementById('customer-email').value,
-                    origin: document.getElementById('customer-origin').value,
+                    phone: document.getElementById('customer-phone').value || null,
+                    email: document.getElementById('customer-email').value || null,
+                    origin: document.getElementById('customer-origin').value || null,
                     status: 'lead',
-                    kanbanColumnId: 1,
-                    tags: [],
+                    kanban_column_id: 1,
                     created_at: new Date().toISOString(),
-                    next_followup_date: null,
-                    followup_overdue: false,
-                    days_in_current_column: 0,
-                    total_sales: 0,
-                    is_recurring: false,
-                    contacts: []
+                    updated_at: new Date().toISOString()
                 };
-                customers.push(customer);
-                saveData();
-                closeModal('customer-modal');
-                loadCustomers();
-                loadKanban();
-                loadDashboard();
+                
+                try {
+                    if (useSupabase) {
+                        // Salvar no Supabase
+                        const newCustomer = await supabaseRequest('customers', 'POST', customerData);
+                        if (newCustomer) {
+                            const savedCustomer = Array.isArray(newCustomer) ? newCustomer[0] : newCustomer;
+                            customers.push(savedCustomer);
+                            console.log('✅ Cliente salvo no Supabase:', savedCustomer);
+                            alert('Cliente criado com sucesso!');
+                        } else {
+                            throw new Error('Erro ao salvar cliente no Supabase');
+                        }
+                    } else {
+                        // Salvar no localStorage
+                        const customer = {
+                            ...customerData,
+                            id: Date.now(),
+                            kanbanColumnId: 1,
+                            tags: [],
+                            next_followup_date: null,
+                            followup_overdue: false,
+                            days_in_current_column: 0,
+                            total_sales: 0,
+                            is_recurring: false,
+                            contacts: []
+                        };
+                        customers.push(customer);
+                        saveData();
+                        alert('Cliente criado com sucesso!');
+                    }
+                    
+                    // Recarregar dados do Supabase se necessário
+                    if (useSupabase) {
+                        await loadDataFromSupabase();
+                    }
+                    
+                    closeModal('customer-modal');
+                    document.getElementById('customer-form').reset();
+                    loadCustomers();
+                    loadKanban();
+                    loadDashboard();
+                } catch (error) {
+                    console.error('Erro ao criar cliente:', error);
+                    alert('Erro ao criar cliente: ' + (error.message || 'Erro desconhecido'));
+                }
             });
 
             // Variável para controlar se está editando
@@ -3568,6 +3876,8 @@
                     volume: document.getElementById('product-volume').value || '',
                     batch: document.getElementById('product-batch').value || '',
                     origin: document.getElementById('product-origin').value || '',
+                    gender: document.getElementById('product-gender').value || null,
+                    fragrance: document.getElementById('product-fragrance').value || null,
                     price: price,
                     cost: cost,
                         stock: parseInt(document.getElementById('product-stock').value) || 0,
@@ -3600,6 +3910,8 @@
                                 volume: productData.volume || null,
                                 batch: productData.batch || null,
                                 origin: productData.origin || null,
+                                gender: productData.gender || null,
+                                fragrance: productData.fragrance ? JSON.stringify(productData.fragrance) : null,
                                 price: productData.price,
                                 cost: productData.cost || null,
                                 stock_quantity: productData.stock || 0,
@@ -3703,6 +4015,8 @@
                                 volume: productData.volume || null,
                                 batch: productData.batch || null,
                                 origin: productData.origin || null,
+                                gender: productData.gender || null,
+                                fragrance: productData.fragrance ? JSON.stringify(productData.fragrance) : null,
                                 price: productData.price,
                                 cost: productData.cost || null,
                                 stock_quantity: productData.stock || 0,
@@ -3835,6 +4149,24 @@
                 document.getElementById('product-volume').value = product.volume || '';
                 document.getElementById('product-batch').value = product.batch || '';
                 document.getElementById('product-origin').value = product.origin || '';
+                document.getElementById('product-gender').value = product.gender || '';
+                // Campo de fragrância simples (descrição)
+                let fragranceDesc = '';
+                if (product.fragrance) {
+                    if (typeof product.fragrance === 'string' && product.fragrance.startsWith('{')) {
+                        try {
+                            const fragObj = JSON.parse(product.fragrance);
+                            fragranceDesc = fragObj.description || '';
+                        } catch (e) {
+                            fragranceDesc = '';
+                        }
+                    } else if (typeof product.fragrance === 'object' && product.fragrance.description) {
+                        fragranceDesc = product.fragrance.description;
+                    } else if (typeof product.fragrance === 'string') {
+                        fragranceDesc = product.fragrance;
+                    }
+                }
+                document.getElementById('product-fragrance').value = fragranceDesc;
                 document.getElementById('product-price').value = product.price || '';
                 document.getElementById('product-cost').value = product.cost || '';
                 document.getElementById('product-stock').value = product.stock || 0;
@@ -3851,16 +4183,25 @@
                 }
                 selectedImageFile = null;
                 
-                // Fragrâncias
-                if (product.fragrance) {
-                    document.getElementById('product-notes-top').value = product.fragrance.notesTop || '';
-                    document.getElementById('product-notes-heart').value = product.fragrance.notesHeart || '';
-                    document.getElementById('product-notes-base').value = product.fragrance.notesBase || '';
-                    document.getElementById('product-fragrance-family').value = product.fragrance.family || '';
-                    document.getElementById('product-duration').value = product.fragrance.duration || '';
-                    document.getElementById('product-projection').value = product.fragrance.projection || '';
-                    document.getElementById('product-occasion').value = product.fragrance.occasion || '';
-                    document.getElementById('product-description').value = product.fragrance.description || '';
+                // Fragrâncias - fazer parse se for string JSON
+                let fragranceData = product.fragrance;
+                if (typeof fragranceData === 'string' && fragranceData.startsWith('{')) {
+                    try {
+                        fragranceData = JSON.parse(fragranceData);
+                    } catch (e) {
+                        fragranceData = null;
+                    }
+                }
+                
+                if (fragranceData && typeof fragranceData === 'object') {
+                    document.getElementById('product-notes-top').value = fragranceData.notesTop || '';
+                    document.getElementById('product-notes-heart').value = fragranceData.notesHeart || '';
+                    document.getElementById('product-notes-base').value = fragranceData.notesBase || '';
+                    document.getElementById('product-fragrance-family').value = fragranceData.family || '';
+                    document.getElementById('product-duration').value = fragranceData.duration || '';
+                    document.getElementById('product-projection').value = fragranceData.projection || '';
+                    document.getElementById('product-occasion').value = fragranceData.occasion || '';
+                    document.getElementById('product-description').value = fragranceData.description || '';
                 }
                 
                 // Atualizar título do modal
@@ -4049,9 +4390,6 @@
                 selectedImageFile = null;
             };
 
-            // Variável global para cupom aplicado
-            let appliedCoupon = null;
-            
             window.applyCoupon = function() {
                 const code = document.getElementById('sale-coupon-code').value.toUpperCase();
                 const messageDiv = document.getElementById('coupon-message');
@@ -4112,7 +4450,7 @@
                 updateSaleTotal();
             };
 
-            document.getElementById('sale-form').addEventListener('submit', (e) => {
+            document.getElementById('sale-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const items = [];
                 document.querySelectorAll('.sale-item-row').forEach(row => {
@@ -4172,6 +4510,98 @@
                     date: new Date().toISOString(),
                     status: 'completed'
                 };
+                
+                // Salvar no Supabase se estiver usando
+                if (useSupabase) {
+                    try {
+                        // Tentar usar os nomes corretos das colunas
+                        // Calcular parcelas se necessário
+                        const paymentType = document.getElementById('sale-payment-type').value;
+                        const installments = parseInt(document.getElementById('sale-payment-installments')?.value || '1');
+                        const dueDate = document.getElementById('sale-payment-due-date')?.value || null;
+                        
+                        // Calcular valores das parcelas
+                        let installmentsDates = null;
+                        let installmentsValues = null;
+                        if (installments > 1 && dueDate) {
+                            const dates = [];
+                            const values = [];
+                            const installmentValue = sale.total / installments;
+                            const dueDateObj = new Date(dueDate);
+                            
+                            for (let i = 0; i < installments; i++) {
+                                const currentDate = new Date(dueDateObj);
+                                currentDate.setMonth(currentDate.getMonth() + i);
+                                dates.push(currentDate.toISOString().split('T')[0]);
+                                values.push(installmentValue.toFixed(2));
+                            }
+                            installmentsDates = JSON.stringify(dates);
+                            installmentsValues = JSON.stringify(values);
+                        }
+                        
+                        const saleData = {
+                            sale_number: sale.number, // Nome padrão no schema
+                            customer_id: sale.customerId,
+                            items: JSON.stringify(sale.items), // JSON string dos itens
+                            subtotal: sale.subtotal,
+                            discount: sale.discount,
+                            total_amount: sale.total, // Nome padrão no schema
+                            coupon_code: sale.couponCode,
+                            status: sale.status,
+                            payment_method: paymentType === 'dinheiro' ? 'cash' : paymentType === 'pix' ? 'pix' : paymentType,
+                            payment_type: paymentType,
+                            payment_installments: installments,
+                            payment_due_date: dueDate,
+                            payment_installments_dates: installmentsDates,
+                            payment_installments_values: installmentsValues,
+                            sale_method: document.getElementById('sale-method').value,
+                            sale_method_details: document.getElementById('sale-method-details').value || null,
+                            notes: document.getElementById('sale-notes').value || null
+                        };
+                        
+                        const savedSale = await supabaseRequest('sales', 'POST', saleData);
+                        
+                        // Supabase pode retornar um array ou um objeto único
+                        let saleResult = Array.isArray(savedSale) ? savedSale[0] : savedSale;
+                        
+                        if (saleResult && saleResult.id) {
+                            sale.id = saleResult.id;
+                            console.log('✅ Venda salva no Supabase:', saleResult);
+                            
+                            // Salvar itens da venda na tabela sale_items (se existir)
+                            if (saleResult.id && sale.items && sale.items.length > 0) {
+                                for (const item of sale.items) {
+                                    try {
+                                        await supabaseRequest('sale_items', 'POST', {
+                                            sale_id: saleResult.id,
+                                            product_id: item.productId,
+                                            quantity: item.quantity,
+                                            unit_price: item.unitPrice,
+                                            total_price: item.totalPrice
+                                        });
+                                    } catch (itemError) {
+                                        console.warn('Aviso: Não foi possível salvar item da venda:', itemError);
+                                    }
+                                }
+                            }
+                        } else {
+                            // Mesmo se não retornar ID, a venda pode ter sido salva
+                            // Verificar se há vendas no banco depois
+                            console.warn('⚠️ Resposta do Supabase não contém ID, mas a venda pode ter sido salva:', savedSale);
+                        }
+                    } catch (error) {
+                        // Verificar se o erro é realmente crítico ou se a venda foi salva
+                        const errorMessage = error.message || error.toString();
+                        if (errorMessage.includes('ambiguous') || errorMessage.includes('points_earned')) {
+                            console.error('❌ Erro de ambiguidade ao salvar venda no Supabase:', error);
+                            console.warn('⚠️ A venda pode ter sido salva mesmo com o erro. Verifique no banco de dados.');
+                        } else {
+                            console.error('❌ Erro ao salvar venda no Supabase:', error);
+                        }
+                        // Continuar mesmo com erro - a venda pode ter sido salva
+                    }
+                }
+                
                 sales.push(sale);
                 
                 // Atualizar cliente se houver
@@ -4192,8 +4622,42 @@
                             customer.loyaltyPoints = (customer.loyaltyPoints || 0) + pointsEarned;
                             customer.loyaltyLevel = getLoyaltyLevel(customer.loyaltyPoints);
                         }
+                        
+                        // Atualizar cliente no Supabase (SEM loyalty_points/loyalty_level para evitar ambiguidade)
+                        if (useSupabase) {
+                            try {
+                                // Atualizar apenas campos básicos, sem loyalty para evitar ambiguidade
+                                const updateData = {
+                                    total_sales: customer.total_sales,
+                                    last_sale_date: customer.last_sale_date,
+                                    is_recurring: customer.is_recurring,
+                                    status: customer.status
+                                };
+                                
+                                // NÃO enviar loyalty_points ou loyalty_level para evitar ambiguidade
+                                // Esses campos serão atualizados separadamente se necessário
+                                
+                                await supabaseRequest('customers', 'PATCH', updateData, `?id=eq.${customer.id}`);
+                            } catch (error) {
+                                console.error('Erro ao atualizar cliente no Supabase:', error);
+                            }
+                        }
                     }
                 }
+                
+                // Atualizar estoque dos produtos no Supabase
+                items.forEach(item => {
+                    const product = products.find(p => p.id === item.productId);
+                    if (product && useSupabase) {
+                        try {
+                            supabaseRequest('products', 'PATCH', {
+                                stock_quantity: product.stock
+                            }, `?id=eq.${product.id}`);
+                        } catch (error) {
+                            console.error('Erro ao atualizar estoque no Supabase:', error);
+                        }
+                    }
+                });
                 
                 // Limpar cupom aplicado
                 appliedCoupon = null;
@@ -4219,6 +4683,14 @@
             });
 
             document.getElementById('add-sale-item').addEventListener('click', addSaleItem);
+            
+            // Filtro de cobranças
+            const invoiceFilter = document.getElementById('invoice-filter');
+            if (invoiceFilter) {
+                invoiceFilter.addEventListener('change', () => {
+                    loadInvoices();
+                });
+            }
             
             // Limpar cupom ao fechar modal de venda
             const saleModal = document.getElementById('sale-modal');
@@ -4355,6 +4827,7 @@
                     break;
                 case 'products': loadProducts(); break;
                 case 'sales': loadSales(); break;
+                case 'invoices': loadInvoices(); break;
                 case 'financial': loadFinancial(); break;
                 case 'coupons': loadCoupons(); break;
                 case 'loyalty': loadLoyalty(); break;
@@ -4718,13 +5191,26 @@
                 
                 // Informações do catálogo de fragrâncias
                 let fragranceHtml = '';
-                if (product.fragrance) {
-                    const frag = product.fragrance;
+                // Fazer parse da fragrância se for string JSON
+                let frag = product.fragrance;
+                if (typeof frag === 'string' && frag.startsWith('{')) {
+                    try {
+                        frag = JSON.parse(frag);
+                    } catch (e) {
+                        frag = null;
+                    }
+                }
+                
+                if (frag && typeof frag === 'object') {
                     fragranceHtml = `
                         <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(212, 175, 55, 0.2);">
+                            ${frag.notesTop ? `<div style="margin-bottom: 0.5rem;"><span style="color: rgba(245, 243, 239, 0.6); font-size: 0.75rem;">Notas de Topo:</span> <span style="font-size: 0.875rem;">${frag.notesTop}</span></div>` : ''}
+                            ${frag.notesHeart ? `<div style="margin-bottom: 0.5rem;"><span style="color: rgba(245, 243, 239, 0.6); font-size: 0.75rem;">Notas de Coração:</span> <span style="font-size: 0.875rem;">${frag.notesHeart}</span></div>` : ''}
+                            ${frag.notesBase ? `<div style="margin-bottom: 0.5rem;"><span style="color: rgba(245, 243, 239, 0.6); font-size: 0.75rem;">Notas de Base:</span> <span style="font-size: 0.875rem;">${frag.notesBase}</span></div>` : ''}
                             ${frag.family ? `<div style="margin-bottom: 0.5rem;"><span style="color: rgba(245, 243, 239, 0.6); font-size: 0.75rem;">Família:</span> <span style="color: #D4AF37; font-size: 0.875rem; text-transform: capitalize;">${frag.family}</span></div>` : ''}
                             ${frag.duration ? `<div style="margin-bottom: 0.5rem;"><span style="color: rgba(245, 243, 239, 0.6); font-size: 0.75rem;">Duração:</span> <span style="font-size: 0.875rem;">${frag.duration}</span></div>` : ''}
                             ${frag.projection ? `<div style="margin-bottom: 0.5rem;"><span style="color: rgba(245, 243, 239, 0.6); font-size: 0.75rem;">Projeção:</span> <span style="font-size: 0.875rem;">${frag.projection}</span></div>` : ''}
+                            ${frag.occasion ? `<div style="margin-bottom: 0.5rem;"><span style="color: rgba(245, 243, 239, 0.6); font-size: 0.75rem;">Ocasião:</span> <span style="font-size: 0.875rem;">${frag.occasion}</span></div>` : ''}
                         </div>
                     `;
                 }
@@ -4766,30 +5252,240 @@
             });
         }
 
+        // Função para carregar cobranças (vendas parceladas)
+        function loadInvoices() {
+            const tbody = document.getElementById('invoices-table-body');
+            tbody.innerHTML = '';
+            
+            // Filtrar vendas que precisam de cobrança:
+            // - Têm parcelas (payment_installments > 1)
+            // - E não são PIX, dinheiro ou débito
+            // - Ou têm status de pagamento pendente
+            const invoiceSales = sales.filter(sale => {
+                const paymentType = (sale.payment_type || sale.payment_method || '').toLowerCase();
+                const excludedTypes = ['pix', 'dinheiro', 'cash', 'debit_card', 'débito'];
+                const hasInstallments = sale.payment_installments > 1;
+                const isPending = sale.payment_status === 'pending';
+                const isExcluded = excludedTypes.includes(paymentType);
+                
+                // Incluir se: tem parcelas E não é tipo excluído OU está pendente
+                return (hasInstallments && !isExcluded) || (isPending && !isExcluded);
+            });
+            
+            if (invoiceSales.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Nenhuma cobrança pendente</td></tr>';
+                return;
+            }
+            
+            // Aplicar filtro se houver
+            const filterValue = document.getElementById('invoice-filter')?.value || 'all';
+            let filteredSales = invoiceSales;
+            
+            if (filterValue === 'pending') {
+                filteredSales = invoiceSales.filter(s => s.payment_status === 'pending');
+            } else if (filterValue === 'overdue') {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                filteredSales = invoiceSales.filter(s => {
+                    if (!s.payment_due_date) return false;
+                    const dueDate = new Date(s.payment_due_date);
+                    dueDate.setHours(0, 0, 0, 0);
+                    return dueDate < today && s.payment_status !== 'paid';
+                });
+            } else if (filterValue === 'this-month') {
+                const now = new Date();
+                const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+                filteredSales = invoiceSales.filter(s => {
+                    if (!s.created_at) return false;
+                    const saleDate = new Date(s.created_at);
+                    return saleDate >= firstDay;
+                });
+            }
+            
+            if (filteredSales.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Nenhuma cobrança encontrada com os filtros selecionados</td></tr>';
+                return;
+            }
+            
+            filteredSales.forEach(sale => {
+                const customerName = sale.customer_name || (customers.find(c => c.id === sale.customer_id || c.id === sale.customerId)?.name) || 'Não informado';
+                const saleTotal = sale.total || sale.total_amount || 0;
+                const formattedTotal = typeof saleTotal === 'number' 
+                    ? saleTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+                    : '0,00';
+                
+                // Formatar forma de pagamento
+                const paymentType = sale.payment_type || sale.payment_method || '-';
+                const paymentNames = {
+                    'dinheiro': 'Dinheiro',
+                    'cash': 'Dinheiro',
+                    'pix': 'PIX',
+                    'cartao': 'Cartão',
+                    'credit_card': 'Cartão',
+                    'debit_card': 'Débito',
+                    'fonte': 'Fonte',
+                    'promissoria': 'Promissória',
+                    'boleto': 'Boleto'
+                };
+                const paymentInfo = paymentNames[paymentType] || paymentType;
+                
+                // Parsear parcelas
+                let installmentsDates = [];
+                let installmentsValues = [];
+                if (sale.payment_installments_dates) {
+                    try {
+                        installmentsDates = typeof sale.payment_installments_dates === 'string' 
+                            ? JSON.parse(sale.payment_installments_dates) 
+                            : sale.payment_installments_dates;
+                    } catch (e) {
+                        console.error('Erro ao parsear datas:', e);
+                    }
+                }
+                if (sale.payment_installments_values) {
+                    try {
+                        installmentsValues = typeof sale.payment_installments_values === 'string' 
+                            ? JSON.parse(sale.payment_installments_values) 
+                            : sale.payment_installments_values;
+                    } catch (e) {
+                        console.error('Erro ao parsear valores:', e);
+                    }
+                }
+                
+                // Encontrar próxima parcela a vencer
+                let nextDueDate = null;
+                let nextParcelNumber = null;
+                if (installmentsDates.length > 0) {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    for (let i = 0; i < installmentsDates.length; i++) {
+                        const dueDate = new Date(installmentsDates[i]);
+                        dueDate.setHours(0, 0, 0, 0);
+                        if (dueDate >= today) {
+                            nextDueDate = installmentsDates[i];
+                            nextParcelNumber = i + 1;
+                            break;
+                        }
+                    }
+                    // Se não encontrou próxima, pega a última
+                    if (!nextDueDate && installmentsDates.length > 0) {
+                        nextDueDate = installmentsDates[installmentsDates.length - 1];
+                        nextParcelNumber = installmentsDates.length;
+                    }
+                } else if (sale.payment_due_date) {
+                    nextDueDate = sale.payment_due_date;
+                    nextParcelNumber = 1;
+                }
+                
+                const nextDueDateFormatted = nextDueDate 
+                    ? new Date(nextDueDate).toLocaleDateString('pt-BR')
+                    : '-';
+                
+                // Status da cobrança
+                let statusBadge = '';
+                if (sale.payment_status === 'paid') {
+                    statusBadge = '<span class="status-badge cliente">Pago</span>';
+                } else if (nextDueDate) {
+                    const dueDate = new Date(nextDueDate);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    dueDate.setHours(0, 0, 0, 0);
+                    if (dueDate < today) {
+                        statusBadge = '<span class="status-badge" style="background: #ef4444;">Vencida</span>';
+                    } else {
+                        statusBadge = '<span class="status-badge" style="background: #fbbf24;">Pendente</span>';
+                    }
+                } else {
+                    statusBadge = '<span class="status-badge" style="background: #fbbf24;">Pendente</span>';
+                }
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${sale.number || sale.sale_number || '-'}</td>
+                    <td>${customerName}</td>
+                    <td>R$ ${formattedTotal}</td>
+                    <td>${paymentInfo}</td>
+                    <td>${sale.payment_installments > 1 ? `${sale.payment_installments}x` : '1x'}</td>
+                    <td>${nextDueDateFormatted}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button class="btn btn-sm btn-primary" onclick="generateInvoice(${sale.id})" title="Gerar Cobrança">
+                                <i class="fas fa-file-invoice"></i> Gerar
+                            </button>
+                            <button class="btn btn-sm btn-secondary" onclick="viewSaleDetails(${sale.id})" title="Ver Detalhes">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
         function loadSales() {
             const tbody = document.getElementById('sales-table-body');
             tbody.innerHTML = '';
             if (sales.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Nenhuma venda registrada</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhuma venda registrada</td></tr>';
                 return;
             }
             sales.forEach(sale => {
-                const customer = customers.find(c => c.id === sale.customerId);
-                const saleDate = sale.date ? (typeof sale.date === 'string' ? new Date(sale.date) : sale.date) : new Date();
+                // Usar customer_name da view se disponível, senão buscar no array
+                const customerName = sale.customer_name || (customers.find(c => c.id === sale.customer_id || c.id === sale.customerId)?.name) || '-';
+                const saleDate = sale.created_at ? new Date(sale.created_at) : (sale.date ? (typeof sale.date === 'string' ? new Date(sale.date) : sale.date) : new Date());
                 const saleCertificates = certificates.filter(c => c.sale_id === sale.id);
+                
+                // Garantir que total existe e é um número
+                const saleTotal = sale.total || sale.total_amount || 0;
+                const formattedTotal = typeof saleTotal === 'number' 
+                    ? saleTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+                    : '0,00';
+                
+                // Forma de pagamento - traduzir e formatar
+                let paymentInfo = '-';
+                if (sale.payment_type || sale.payment_method) {
+                    const paymentType = sale.payment_type || sale.payment_method;
+                    const paymentNames = {
+                        'dinheiro': 'Dinheiro',
+                        'cash': 'Dinheiro',
+                        'pix': 'PIX',
+                        'cartao': 'Cartão',
+                        'credit_card': 'Cartão',
+                        'debit_card': 'Cartão',
+                        'fonte': 'Fonte',
+                        'promissoria': 'Promissória',
+                        'boleto': 'Boleto'
+                    };
+                    paymentInfo = paymentNames[paymentType] || paymentType;
+                    if (sale.payment_installments > 1) {
+                        paymentInfo += ` (${sale.payment_installments}x)`;
+                    }
+                }
+                
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${sale.number}</td>
-                    <td>${customer ? customer.name : '-'}</td>
-                    <td>R$ ${sale.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-                    <td><span class="status-badge cliente">${sale.status}</span></td>
-                    <td>${saleDate instanceof Date ? saleDate.toLocaleDateString('pt-BR') : sale.date}</td>
+                    <td>${sale.number || sale.sale_number || '-'}</td>
+                    <td>${customerName}</td>
+                    <td>R$ ${formattedTotal}</td>
+                    <td>${paymentInfo}</td>
+                    <td><span class="status-badge cliente">${sale.status || 'completed'}</span></td>
+                    <td>${saleDate instanceof Date ? saleDate.toLocaleDateString('pt-BR') : (sale.date || '-')}</td>
                     <td>
-                        ${saleCertificates.length > 0 ? `
-                            <button class="btn btn-sm btn-primary" onclick="viewCertificates(${sale.id})" title="Ver Certificados">
-                                <i class="fas fa-certificate"></i> Certificados (${saleCertificates.length})
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button class="btn btn-sm btn-secondary" onclick="viewSaleDetails(${sale.id})" title="Ver Detalhes">
+                                <i class="fas fa-eye"></i>
                             </button>
-                        ` : '<span style="color: rgba(245, 243, 239, 0.5);">-</span>'}
+                            ${sale.payment_installments > 1 || sale.payment_status === 'pending' ? `
+                                <button class="btn btn-sm btn-primary" onclick="generateInvoice(${sale.id})" title="Gerar Cobrança">
+                                    <i class="fas fa-file-invoice"></i>
+                                </button>
+                            ` : ''}
+                            ${saleCertificates.length > 0 ? `
+                                <button class="btn btn-sm btn-primary" onclick="viewCertificates(${sale.id})" title="Ver Certificados">
+                                    <i class="fas fa-certificate"></i> (${saleCertificates.length})
+                                </button>
+                            ` : ''}
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -4809,8 +5505,416 @@
             const itemsContainer = document.getElementById('sale-items');
             itemsContainer.innerHTML = '';
             addSaleItem();
+            
+            // Limpar cupom e recalcular total
+            appliedCoupon = null;
+            const couponCodeInput = document.getElementById('sale-coupon-code');
+            if (couponCodeInput) {
+                couponCodeInput.value = '';
+            }
+            const couponMessage = document.getElementById('coupon-message');
+            if (couponMessage) {
+                couponMessage.innerHTML = '';
+            }
+            calculateTotal();
         }
 
+        // Funções para campos de pagamento
+        function togglePaymentFields() {
+            const paymentType = document.getElementById('sale-payment-type').value;
+            const installmentsGroup = document.getElementById('payment-installments-group');
+            const dueDateGroup = document.getElementById('payment-due-date-group');
+            const methodDetailsGroup = document.getElementById('sale-method-details-group');
+            const saleMethod = document.getElementById('sale-method').value;
+            
+            // Mostrar campos de parcelas apenas para cartão, fonte ou promissória
+            if (paymentType === 'cartao' || paymentType === 'fonte' || paymentType === 'promissoria') {
+                installmentsGroup.style.display = 'block';
+                dueDateGroup.style.display = 'block';
+                calculateInstallments();
+            } else {
+                installmentsGroup.style.display = 'none';
+                dueDateGroup.style.display = 'none';
+                document.getElementById('sale-payment-installments').value = '1';
+            }
+            
+            // Mostrar detalhes se método de venda for "outro"
+            if (saleMethod === 'outro') {
+                methodDetailsGroup.style.display = 'block';
+            } else {
+                methodDetailsGroup.style.display = 'none';
+            }
+        }
+        
+        function calculateInstallments() {
+            const installments = parseInt(document.getElementById('sale-payment-installments')?.value || '1');
+            const total = parseFloat(document.getElementById('sale-total')?.textContent.replace(/[^\d,]/g, '').replace(',', '.') || '0');
+            
+            if (installments > 1 && total > 0) {
+                const installmentValue = total / installments;
+                console.log(`Valor por parcela: R$ ${installmentValue.toFixed(2)}`);
+            }
+        }
+        
+        // Listener para mudança no método de venda
+        document.addEventListener('DOMContentLoaded', function() {
+            const saleMethodSelect = document.getElementById('sale-method');
+            if (saleMethodSelect) {
+                saleMethodSelect.addEventListener('change', function() {
+                    const methodDetailsGroup = document.getElementById('sale-method-details-group');
+                    if (this.value === 'outro') {
+                        methodDetailsGroup.style.display = 'block';
+                    } else {
+                        methodDetailsGroup.style.display = 'none';
+                    }
+                });
+            }
+        });
+        
+        // Função para visualizar detalhes da venda
+        function viewSaleDetails(saleId) {
+            const sale = sales.find(s => s.id === saleId);
+            if (!sale) {
+                alert('Venda não encontrada');
+                return;
+            }
+            
+            const customer = customers.find(c => c.id === sale.customer_id || c.id === sale.customerId);
+            const customerName = sale.customer_name || customer?.name || 'Não informado';
+            const customerEmail = sale.customer_email || customer?.email || 'Não informado';
+            const customerPhone = sale.customer_phone || customer?.phone || 'Não informado';
+            
+            // Formatar forma de pagamento
+            let paymentInfo = 'Não informado';
+            if (sale.payment_type || sale.payment_method) {
+                const paymentType = sale.payment_type || sale.payment_method;
+                const paymentNames = {
+                    'dinheiro': 'Dinheiro',
+                    'cash': 'Dinheiro',
+                    'pix': 'PIX',
+                    'cartao': 'Cartão',
+                    'credit_card': 'Cartão',
+                    'debit_card': 'Cartão',
+                    'fonte': 'Fonte',
+                    'promissoria': 'Promissória',
+                    'boleto': 'Boleto'
+                };
+                paymentInfo = paymentNames[paymentType] || paymentType;
+                if (sale.payment_installments > 1) {
+                    paymentInfo += ` (${sale.payment_installments} parcelas)`;
+                }
+            }
+            
+            // Formatar método de venda
+            const saleMethodNames = {
+                'presencial': 'Presencial',
+                'online': 'Online',
+                'telefone': 'Telefone',
+                'whatsapp': 'WhatsApp',
+                'email': 'E-mail',
+                'outro': 'Outro'
+            };
+            const saleMethod = saleMethodNames[sale.sale_method] || sale.sale_method || 'Não informado';
+            
+            // Parsear itens se for string JSON
+            let saleItems = [];
+            if (sale.items) {
+                try {
+                    saleItems = typeof sale.items === 'string' ? JSON.parse(sale.items) : sale.items;
+                } catch (e) {
+                    console.error('Erro ao parsear itens:', e);
+                }
+            }
+            
+            // Parsear parcelas se existir
+            let installmentsDates = [];
+            let installmentsValues = [];
+            if (sale.payment_installments_dates) {
+                try {
+                    installmentsDates = typeof sale.payment_installments_dates === 'string' 
+                        ? JSON.parse(sale.payment_installments_dates) 
+                        : sale.payment_installments_dates;
+                } catch (e) {
+                    console.error('Erro ao parsear datas:', e);
+                }
+            }
+            if (sale.payment_installments_values) {
+                try {
+                    installmentsValues = typeof sale.payment_installments_values === 'string' 
+                        ? JSON.parse(sale.payment_installments_values) 
+                        : sale.payment_installments_values;
+                } catch (e) {
+                    console.error('Erro ao parsear valores:', e);
+                }
+            }
+            
+            const content = document.getElementById('sale-details-content');
+            content.innerHTML = `
+                <div style="display: grid; gap: 1.5rem;">
+                    <div>
+                        <h3 style="margin-bottom: 1rem; color: #D4AF37;">Informações da Venda</h3>
+                        <div style="display: grid; gap: 0.75rem;">
+                            <div><strong>Número:</strong> ${sale.number || sale.sale_number || '-'}</div>
+                            <div><strong>Data:</strong> ${sale.created_at ? new Date(sale.created_at).toLocaleString('pt-BR') : (sale.date || '-')}</div>
+                            <div><strong>Status:</strong> <span class="status-badge cliente">${sale.status || 'completed'}</span></div>
+                            <div><strong>Método de Venda:</strong> ${saleMethod}</div>
+                            ${sale.sale_method_details ? `<div><strong>Detalhes:</strong> ${sale.sale_method_details}</div>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 style="margin-bottom: 1rem; color: #D4AF37;">Cliente</h3>
+                        <div style="display: grid; gap: 0.75rem;">
+                            <div><strong>Nome:</strong> ${customerName}</div>
+                            <div><strong>E-mail:</strong> ${customerEmail}</div>
+                            <div><strong>Telefone:</strong> ${customerPhone}</div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 style="margin-bottom: 1rem; color: #D4AF37;">Pagamento</h3>
+                        <div style="display: grid; gap: 0.75rem;">
+                            <div><strong>Forma:</strong> ${paymentInfo}</div>
+                            <div><strong>Status:</strong> ${sale.payment_status || 'pending'}</div>
+                            ${sale.payment_due_date ? `<div><strong>Vencimento:</strong> ${new Date(sale.payment_due_date).toLocaleDateString('pt-BR')}</div>` : ''}
+                            ${installmentsDates.length > 0 ? `
+                                <div>
+                                    <strong>Parcelas:</strong>
+                                    <div style="margin-top: 0.5rem; padding: 0.75rem; background: rgba(212, 175, 55, 0.1); border-radius: 8px;">
+                                        ${installmentsDates.map((date, index) => `
+                                            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: ${index < installmentsDates.length - 1 ? '1px solid rgba(212, 175, 55, 0.2)' : 'none'};">
+                                                <span>Parcela ${index + 1}:</span>
+                                                <span>R$ ${installmentsValues[index] || (sale.total_amount / sale.payment_installments).toFixed(2)} - Venc: ${new Date(date).toLocaleDateString('pt-BR')}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 style="margin-bottom: 1rem; color: #D4AF37;">Itens da Venda</h3>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid rgba(212, 175, 55, 0.3);">
+                                        <th style="text-align: left; padding: 0.5rem;">Produto</th>
+                                        <th style="text-align: center; padding: 0.5rem;">Qtd</th>
+                                        <th style="text-align: right; padding: 0.5rem;">Valor Unit.</th>
+                                        <th style="text-align: right; padding: 0.5rem;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${saleItems.length > 0 ? saleItems.map(item => {
+                                        const product = products.find(p => p.id === item.productId);
+                                        return `
+                                            <tr style="border-bottom: 1px solid rgba(212, 175, 55, 0.1);">
+                                                <td style="padding: 0.5rem;">${product?.name || 'Produto não encontrado'}</td>
+                                                <td style="text-align: center; padding: 0.5rem;">${item.quantity}</td>
+                                                <td style="text-align: right; padding: 0.5rem;">R$ ${(item.unitPrice || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                                                <td style="text-align: right; padding: 0.5rem;">R$ ${(item.totalPrice || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                                            </tr>
+                                        `;
+                                    }).join('') : '<tr><td colspan="4" style="padding: 1rem; text-align: center;">Nenhum item encontrado</td></tr>'}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 style="margin-bottom: 1rem; color: #D4AF37;">Valores</h3>
+                        <div style="display: grid; gap: 0.75rem; padding: 1rem; background: rgba(212, 175, 55, 0.1); border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Subtotal:</span>
+                                <strong>R$ ${(sale.subtotal || sale.total_amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+                            </div>
+                            ${sale.discount > 0 ? `
+                                <div style="display: flex; justify-content: space-between; color: #D4AF37;">
+                                    <span>Desconto:</span>
+                                    <strong>- R$ ${sale.discount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+                                </div>
+                            ` : ''}
+                            <div style="display: flex; justify-content: space-between; font-size: 1.25rem; padding-top: 0.5rem; border-top: 1px solid rgba(212, 175, 55, 0.3);">
+                                <span><strong>Total:</strong></span>
+                                <strong style="color: #D4AF37;">R$ ${(sale.total || sale.total_amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${sale.notes ? `
+                        <div>
+                            <h3 style="margin-bottom: 1rem; color: #D4AF37;">Observações</h3>
+                            <div style="padding: 0.75rem; background: rgba(212, 175, 55, 0.1); border-radius: 8px;">
+                                ${sale.notes}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            // Mostrar botão de gerar cobrança se necessário
+            const btnGenerate = document.getElementById('btn-generate-invoice-from-details');
+            if (sale.payment_installments > 1 || sale.payment_status === 'pending') {
+                btnGenerate.style.display = 'inline-block';
+                btnGenerate.onclick = () => {
+                    closeModal('sale-details-modal');
+                    generateInvoice(saleId);
+                };
+            } else {
+                btnGenerate.style.display = 'none';
+            }
+            
+            openModal('sale-details-modal');
+        }
+        
+        // Função para gerar cobrança
+        function generateInvoice(saleId) {
+            currentInvoiceSaleId = saleId;
+            const sale = sales.find(s => s.id === saleId);
+            if (!sale) {
+                alert('Venda não encontrada');
+                return;
+            }
+            
+            // Parsear parcelas
+            let installmentsDates = [];
+            let installmentsValues = [];
+            if (sale.payment_installments_dates) {
+                try {
+                    installmentsDates = typeof sale.payment_installments_dates === 'string' 
+                        ? JSON.parse(sale.payment_installments_dates) 
+                        : sale.payment_installments_dates;
+                } catch (e) {
+                    console.error('Erro ao parsear datas:', e);
+                }
+            }
+            if (sale.payment_installments_values) {
+                try {
+                    installmentsValues = typeof sale.payment_installments_values === 'string' 
+                        ? JSON.parse(sale.payment_installments_values) 
+                        : sale.payment_installments_values;
+                } catch (e) {
+                    console.error('Erro ao parsear valores:', e);
+                }
+            }
+            
+            // Atualizar preview
+            const preview = document.getElementById('invoice-preview');
+            if (sale.payment_installments > 1 && installmentsDates.length > 0) {
+                preview.style.display = 'block';
+                preview.innerHTML = `
+                    <h4 style="margin-bottom: 0.75rem;">Parcelas:</h4>
+                    ${installmentsDates.map((date, index) => `
+                        <div style="padding: 0.5rem 0; border-bottom: ${index < installmentsDates.length - 1 ? '1px solid rgba(212, 175, 55, 0.2)' : 'none'};">
+                            Parcela ${index + 1}: R$ ${installmentsValues[index] || (sale.total_amount / sale.payment_installments).toFixed(2)} - Venc: ${new Date(date).toLocaleDateString('pt-BR')}
+                        </div>
+                    `).join('')}
+                `;
+            } else {
+                preview.style.display = 'none';
+            }
+            
+            // Mostrar/ocultar campo de parcela customizada
+            document.getElementById('invoice-type').addEventListener('change', function() {
+                document.getElementById('invoice-custom-parcel').style.display = 
+                    this.value === 'custom' ? 'block' : 'none';
+            });
+            
+            openModal('invoice-modal');
+        }
+        
+        // Variável global para armazenar ID da venda atual no modal de cobrança
+        let currentInvoiceSaleId = null;
+        
+        // Função para confirmar geração de cobrança
+        function confirmGenerateInvoice() {
+            if (!currentInvoiceSaleId) {
+                alert('Erro: Venda não identificada');
+                return;
+            }
+            
+            const sale = sales.find(s => s.id === currentInvoiceSaleId);
+            if (!sale) {
+                alert('Venda não encontrada');
+                return;
+            }
+            
+            const invoiceType = document.getElementById('invoice-type').value;
+            const invoiceFormat = document.getElementById('invoice-format').value;
+            const parcelNumber = parseInt(document.getElementById('invoice-parcel-number').value) || 1;
+            
+            // Parsear parcelas
+            let installmentsDates = [];
+            let installmentsValues = [];
+            if (sale.payment_installments_dates) {
+                try {
+                    installmentsDates = typeof sale.payment_installments_dates === 'string' 
+                        ? JSON.parse(sale.payment_installments_dates) 
+                        : sale.payment_installments_dates;
+                } catch (e) {
+                    console.error('Erro ao parsear datas:', e);
+                }
+            }
+            if (sale.payment_installments_values) {
+                try {
+                    installmentsValues = typeof sale.payment_installments_values === 'string' 
+                        ? JSON.parse(sale.payment_installments_values) 
+                        : sale.payment_installments_values;
+                } catch (e) {
+                    console.error('Erro ao parsear valores:', e);
+                }
+            }
+            
+            // Gerar cobrança (por enquanto apenas simulação)
+            let message = `Cobrança gerada para venda ${sale.sale_number || sale.number}!\n\n`;
+            
+            if (invoiceType === 'all' && sale.payment_installments > 1) {
+                message += `Todas as ${sale.payment_installments} parcelas serão geradas.`;
+            } else if (invoiceType === 'next') {
+                const nextParcel = installmentsDates.findIndex(date => new Date(date) > new Date());
+                if (nextParcel >= 0) {
+                    message += `Parcela ${nextParcel + 1} de ${sale.payment_installments} será gerada.`;
+                } else {
+                    message += 'Todas as parcelas já venceram.';
+                }
+            } else if (invoiceType === 'custom') {
+                if (parcelNumber > 0 && parcelNumber <= sale.payment_installments) {
+                    message += `Parcela ${parcelNumber} de ${sale.payment_installments} será gerada.`;
+                } else {
+                    alert('Número de parcela inválido');
+                    return;
+                }
+            } else {
+                message += 'Cobrança única será gerada.';
+            }
+            
+            message += `\n\nFormato: ${invoiceFormat === 'pdf' ? 'PDF' : invoiceFormat === 'print' ? 'Impressão' : 'E-mail'}`;
+            
+            // TODO: Implementar geração real de PDF/cobrança
+            // Por enquanto apenas marcar como gerado
+            if (useSupabase && sale.id) {
+                supabaseRequest('sales', 'PATCH', {
+                    payment_receipt_generated: true,
+                    payment_receipt_generated_at: new Date().toISOString()
+                }, `?id=eq.${sale.id}`).then(() => {
+                    console.log('✅ Comprovante marcado como gerado');
+                }).catch(err => {
+                    console.error('Erro ao atualizar status:', err);
+                });
+            }
+            
+            alert(message);
+            closeModal('invoice-modal');
+            
+            // Recarregar vendas para atualizar status
+            if (useSupabase) {
+                loadDataFromSupabase();
+            } else {
+                loadSales();
+            }
+        }
+        
         function addSaleItem() {
             const container = document.getElementById('sale-items');
             const row = document.createElement('div');
@@ -4878,7 +5982,7 @@
             const totalEl = document.getElementById('sale-total');
             
             if (subtotalEl) {
-                subtotalEl.textContent = subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                subtotalEl.textContent = 'R$ ' + subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
             }
             
             if (discountRowEl && discountEl) {
@@ -4891,7 +5995,7 @@
             }
             
             if (totalEl) {
-                totalEl.textContent = total.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                totalEl.textContent = 'R$ ' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
             }
         }
         
@@ -4937,6 +6041,8 @@
                         volume: p.volume,
                         batch: p.batch,
                         origin: p.origin,
+                        gender: p.gender,
+                        fragrance: p.fragrance,
                         price: parseFloat(p.price),
                         cost: p.cost ? parseFloat(p.cost) : null,
                         stock: p.stock_quantity || 0,
@@ -4945,7 +6051,17 @@
                         image_url: p.image_url,
                         image_base64: null, // Não existe no banco
                         is_active: p.is_active !== false,
-                        fragrance: p.fragrance || null
+                        fragrance: (() => {
+                            // Se fragrance for string JSON, fazer parse
+                            if (typeof p.fragrance === 'string' && p.fragrance.startsWith('{')) {
+                                try {
+                                    return JSON.parse(p.fragrance);
+                                } catch (e) {
+                                    return null;
+                                }
+                            }
+                            return p.fragrance || null;
+                        })()
                     }));
                     console.log(`✅ ${products.length} produtos carregados do Supabase`);
                 }
@@ -4957,11 +6073,21 @@
                     console.log(`✅ ${customers.length} clientes carregados do Supabase`);
                 }
 
-                // Carregar vendas
-                const supabaseSales = await supabaseRequest('sales', 'GET', null, '?order=created_at.desc');
-                if (supabaseSales) {
-                    sales = supabaseSales;
-                    console.log(`✅ ${sales.length} vendas carregadas do Supabase`);
+                // Carregar vendas (usar view com nome do cliente)
+                try {
+                    const supabaseSales = await supabaseRequest('sales_with_customer_name', 'GET', null, '?order=created_at.desc');
+                    if (supabaseSales) {
+                        sales = supabaseSales;
+                        console.log(`✅ ${sales.length} vendas carregadas do Supabase`);
+                    }
+                } catch (viewError) {
+                    // Fallback para tabela sales se view não existir
+                    console.warn('View não encontrada, usando tabela sales:', viewError);
+                    const supabaseSales = await supabaseRequest('sales', 'GET', null, '?select=*,customers(name,email,phone)&order=created_at.desc');
+                    if (supabaseSales) {
+                        sales = supabaseSales;
+                        console.log(`✅ ${sales.length} vendas carregadas do Supabase`);
+                    }
                 }
 
                 // Carregar cupons
