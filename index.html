@@ -1349,6 +1349,12 @@
             .sidebar.active {
                 transform: translateX(0);
             }
+            
+            /* Garantir que os itens do menu apareçam no mobile quando o menu está aberto */
+            .sidebar.active .nav-item {
+                display: flex !important;
+                visibility: visible !important;
+            }
 
             .main-content {
                 padding: 1rem;
@@ -1572,6 +1578,12 @@
                 </a>
                 <a class="nav-item" data-page="financial" data-permission="view_financial">
                     <i class="fas fa-chart-pie"></i> <span>Financeiro</span>
+                </a>
+                <a class="nav-item" data-page="coupons" data-permission="view_sales">
+                    <i class="fas fa-ticket-alt"></i> <span>Cupons</span>
+                </a>
+                <a class="nav-item" data-page="loyalty" data-permission="view_customers">
+                    <i class="fas fa-star"></i> <span>Fidelidade</span>
                 </a>
                 <a class="nav-item" data-page="recurrence" data-permission="view_customers">
                     <i class="fas fa-sync-alt"></i> <span>Recorrência</span>
@@ -1978,6 +1990,92 @@
                 </div>
             </div>
 
+            <!-- Coupons -->
+            <div id="coupons-page" class="page">
+                <div class="page-header">
+                    <h1>Cupons e Promoções</h1>
+                    <button class="btn btn-primary" id="add-coupon-btn">
+                        <i class="fas fa-plus"></i> Novo Cupom
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Tipo</th>
+                                    <th>Desconto</th>
+                                    <th>Válido até</th>
+                                    <th>Usos</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="coupons-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loyalty Program -->
+            <div id="loyalty-page" class="page">
+                <div class="page-header">
+                    <h1>Programa de Fidelidade</h1>
+                    <button class="btn btn-primary" id="configure-loyalty-btn">
+                        <i class="fas fa-cog"></i> Configurar
+                    </button>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-purple">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div>
+                            <p class="stat-label">Clientes no Programa</p>
+                            <p class="stat-value" id="loyalty-customers-count">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-green">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div>
+                            <p class="stat-label">Pontos Totais Emitidos</p>
+                            <p class="stat-value" id="loyalty-total-points">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-blue">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div>
+                            <p class="stat-label">Clientes VIP</p>
+                            <p class="stat-value" id="loyalty-vip-count">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 2rem;">
+                    <h2 style="margin-bottom: 1rem; color: #D4AF37;">Ranking de Pontos</h2>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Pontos</th>
+                                    <th>Nível</th>
+                                    <th>Última Compra</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loyalty-ranking-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- Settings -->
             <div id="settings-page" class="page">
                 <div class="page-header">
@@ -2307,43 +2405,140 @@
     </div>
 
     <div id="product-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header">
-                <h2>Novo Produto</h2>
+                <h2 id="product-modal-title">Novo Produto</h2>
                 <button class="modal-close" data-modal="product-modal" style="color: rgba(245, 243, 239, 0.6);">&times;</button>
             </div>
             <form id="product-form">
-                <div class="form-group">
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
                     <label>Nome *</label>
                     <input type="text" id="product-name" required>
                 </div>
-                <div class="form-group">
+                    <div class="form-group" style="flex: 1;">
                     <label>Marca</label>
                     <input type="text" id="product-brand">
                 </div>
+                </div>
+                
+                <!-- Upload de Imagem -->
                 <div class="form-group">
+                    <label>Imagem do Produto</label>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <input type="file" id="product-image-input" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('product-image-input').click()">
+                            <i class="fas fa-upload"></i> Escolher Imagem
+                        </button>
+                        <div id="product-image-preview" style="display: none;">
+                            <img id="product-image-preview-img" src="" alt="Preview" style="max-width: 100px; max-height: 100px; border-radius: 8px; object-fit: cover;">
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="removeProductImage()" style="margin-left: 0.5rem;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="product-image-base64">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
                     <label>Concentração</label>
                     <input type="text" id="product-concentration" placeholder="Ex: Eau de Parfum">
                 </div>
-                <div class="form-group">
+                    <div class="form-group" style="flex: 1;">
                     <label>Volume</label>
                     <input type="text" id="product-volume" placeholder="Ex: 100ml">
                 </div>
+                </div>
+                
+                <!-- Catálogo de Fragrâncias -->
+                <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 8px; padding: 1rem; margin: 1rem 0;">
+                    <h3 style="color: #D4AF37; margin-bottom: 1rem; font-size: 1rem;">Catálogo de Fragrâncias</h3>
                 <div class="form-group">
+                        <label>Notas de Topo</label>
+                        <input type="text" id="product-notes-top" placeholder="Ex: Bergamota, Limão, Lavanda">
+                    </div>
+                    <div class="form-group">
+                        <label>Notas de Coração</label>
+                        <input type="text" id="product-notes-heart" placeholder="Ex: Rosa, Jasmim, Canela">
+                    </div>
+                    <div class="form-group">
+                        <label>Notas de Base</label>
+                        <input type="text" id="product-notes-base" placeholder="Ex: Sândalo, Baunilha, Âmbar">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Família Olfativa</label>
+                            <select id="product-fragrance-family">
+                                <option value="">Selecione</option>
+                                <option value="floral">Floral</option>
+                                <option value="oriental">Oriental</option>
+                                <option value="amadeirado">Amadeirado</option>
+                                <option value="fresco">Fresco</option>
+                                <option value="frutado">Frutado</option>
+                                <option value="citrico">Cítrico</option>
+                                <option value="especiado">Especiado</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Duração</label>
+                            <select id="product-duration">
+                                <option value="">Selecione</option>
+                                <option value="curta">Curta (2-4h)</option>
+                                <option value="media">Média (4-6h)</option>
+                                <option value="longa">Longa (6-8h)</option>
+                                <option value="muito-longa">Muito Longa (8h+)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Projeção</label>
+                            <select id="product-projection">
+                                <option value="">Selecione</option>
+                                <option value="intima">Íntima</option>
+                                <option value="moderada">Moderada</option>
+                                <option value="forte">Forte</option>
+                                <option value="muito-forte">Muito Forte</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Ocasião</label>
+                            <select id="product-occasion">
+                                <option value="">Selecione</option>
+                                <option value="diurno">Diurno</option>
+                                <option value="noturno">Noturno</option>
+                                <option value="versatil">Versátil</option>
+                                <option value="formal">Formal</option>
+                                <option value="casual">Casual</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <textarea id="product-description" rows="3" placeholder="Descrição detalhada da fragrância..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
                     <label>Lote</label>
                     <input type="text" id="product-batch" placeholder="Número do lote">
                 </div>
-                <div class="form-group">
+                    <div class="form-group" style="flex: 1;">
                     <label>Origem</label>
                     <input type="text" id="product-origin" placeholder="País de origem">
                 </div>
-                <div class="form-group">
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
                     <label>Preço *</label>
                     <input type="number" step="0.01" id="product-price" required>
                 </div>
-                <div class="form-group">
+                    <div class="form-group" style="flex: 1;">
                     <label>Custo</label>
                     <input type="number" step="0.01" id="product-cost" placeholder="Para cálculo de margem">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Estoque</label>
@@ -2377,8 +2572,27 @@
                         <i class="fas fa-plus"></i> Adicionar
                     </button>
                 </div>
+                <div class="form-group">
+                    <label>Cupom de Desconto</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" id="sale-coupon-code" placeholder="Digite o código do cupom" style="flex: 1; text-transform: uppercase;">
+                        <button type="button" class="btn btn-secondary" onclick="applyCoupon()">Aplicar</button>
+                    </div>
+                    <div id="coupon-message" style="margin-top: 0.5rem; font-size: 0.875rem;"></div>
+                </div>
                 <div class="sale-total">
-                    Total: R$ <span id="sale-total">0,00</span>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Subtotal:</span>
+                        <span id="sale-subtotal">R$ 0,00</span>
+                    </div>
+                    <div id="sale-discount-row" style="display: none; justify-content: space-between; margin-bottom: 0.5rem; color: #D4AF37;">
+                        <span>Desconto:</span>
+                        <span id="sale-discount">- R$ 0,00</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: 600; padding-top: 0.5rem; border-top: 1px solid rgba(212, 175, 55, 0.3);">
+                        <span>Total:</span>
+                        <span id="sale-total">R$ 0,00</span>
+                    </div>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" data-modal="sale-modal">Cancelar</button>
@@ -2457,16 +2671,205 @@
         </div>
     </div>
 
+    <!-- Coupon Modal -->
+    <div id="coupon-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="coupon-modal-title">Novo Cupom</h2>
+                <button class="modal-close" data-modal="coupon-modal" style="color: rgba(245, 243, 239, 0.6);">&times;</button>
+            </div>
+            <form id="coupon-form">
+                <div class="form-group">
+                    <label>Código do Cupom *</label>
+                    <input type="text" id="coupon-code" required placeholder="Ex: DESCONTO10" style="text-transform: uppercase;">
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Tipo de Desconto *</label>
+                        <select id="coupon-type" required>
+                            <option value="percentage">Percentual (%)</option>
+                            <option value="fixed">Valor Fixo (R$)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Valor do Desconto *</label>
+                        <input type="number" step="0.01" id="coupon-value" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Data de Início</label>
+                        <input type="date" id="coupon-start-date">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Data de Término *</label>
+                        <input type="date" id="coupon-end-date" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Limite de Usos</label>
+                        <input type="number" id="coupon-usage-limit" placeholder="Ilimitado se vazio">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Valor Mínimo da Compra</label>
+                        <input type="number" step="0.01" id="coupon-min-purchase" placeholder="Sem mínimo">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="coupon-description" rows="2" placeholder="Descrição da promoção..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" data-modal="coupon-modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loyalty Program Modal -->
+    <div id="loyalty-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Configurar Programa de Fidelidade</h2>
+                <button class="modal-close" data-modal="loyalty-modal" style="color: rgba(245, 243, 239, 0.6);">&times;</button>
+            </div>
+            <form id="loyalty-form">
+                <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: #D4AF37; margin-bottom: 1rem; font-size: 1rem;">Configuração de Pontos</h3>
+                    <div class="form-group">
+                        <label>Pontos por Real Gasto</label>
+                        <input type="number" step="0.1" id="loyalty-points-per-real" value="1" min="0">
+                        <small style="color: rgba(245, 243, 239, 0.6);">Ex: 1 ponto para cada R$ 1,00 gasto</small>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: #D4AF37; margin-bottom: 1rem; font-size: 1rem;">Níveis do Programa</h3>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span style="color: #CD7F32;">🥉</span>
+                            <strong>Bronze</strong>
+                        </label>
+                        <input type="number" id="loyalty-bronze-min" placeholder="Pontos mínimos" style="width: 100%;">
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span style="color: #C0C0C0;">🥈</span>
+                            <strong>Prata</strong>
+                        </label>
+                        <input type="number" id="loyalty-silver-min" placeholder="Pontos mínimos" style="width: 100%;">
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span style="color: #FFD700;">🥇</span>
+                            <strong>Ouro</strong>
+                        </label>
+                        <input type="number" id="loyalty-gold-min" placeholder="Pontos mínimos" style="width: 100%;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span style="color: #D4AF37;">💎</span>
+                            <strong>Platina</strong>
+                        </label>
+                        <input type="number" id="loyalty-platinum-min" placeholder="Pontos mínimos" style="width: 100%;">
+                    </div>
+                </div>
+                
+                <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: #D4AF37; margin-bottom: 1rem; font-size: 1rem;">Benefícios por Nível</h3>
+                    <div class="form-group">
+                        <label>Desconto Bronze (%)</label>
+                        <input type="number" step="0.1" id="loyalty-bronze-discount" placeholder="0" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Desconto Prata (%)</label>
+                        <input type="number" step="0.1" id="loyalty-silver-discount" placeholder="0" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Desconto Ouro (%)</label>
+                        <input type="number" step="0.1" id="loyalty-gold-discount" placeholder="0" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Desconto Platina (%)</label>
+                        <input type="number" step="0.1" id="loyalty-platinum-discount" placeholder="0" min="0" max="100">
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" data-modal="loyalty-modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Configuração</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // Dados salvos no localStorage
-            let customers = JSON.parse(localStorage.getItem('customers') || '[]');
-            let products = JSON.parse(localStorage.getItem('products') || '[]');
-            let sales = JSON.parse(localStorage.getItem('sales') || '[]');
-            let certificates = JSON.parse(localStorage.getItem('certificates') || '[]');
-            let users = JSON.parse(localStorage.getItem('users') || '[]');
-            let appSettings = JSON.parse(localStorage.getItem('appSettings') || '{}');
+        // Configuração do Supabase (única declaração)
+        const SUPABASE_CONFIG = {
+            url: 'https://zpqtcrfygjtjtacufgbv.supabase.co',
+            anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwcXRjcmZ5Z2p0anRhY3VmZ2J2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3MDY3MDAsImV4cCI6MjA4NDI4MjcwMH0.7p_Dtv7HBcBR9Mg6mDApjAWzZC10CdsnNU41yoHPsyo',
+            storageBucket: 'product-images'
+        };
+
+        // Função para fazer requisições ao Supabase
+        async function supabaseRequest(table, method = 'GET', data = null, filters = '') {
+            try {
+                const url = `${SUPABASE_CONFIG.url}/rest/v1/${table}${filters}`;
+                const options = {
+                    method: method,
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation'
+                    }
+                };
+
+                if (data && (method === 'POST' || method === 'PATCH' || method === 'PUT')) {
+                    options.body = JSON.stringify(data);
+                }
+
+                console.log(`📡 Requisição Supabase: ${method} ${table}`, data || filters);
+
+                const response = await fetch(url, options);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(`❌ Erro Supabase ${response.status}:`, errorText);
+                    throw new Error(`Supabase Error: ${response.status} - ${errorText}`);
+                }
+
+                if (method === 'DELETE') {
+                    return { success: true };
+                }
+
+                const result = await response.json();
+                console.log(`✅ Resposta Supabase (${table}):`, result);
+                return result;
+            } catch (error) {
+                console.error(`❌ Erro ao fazer requisição ao Supabase (${table}):`, error);
+                throw error; // Re-throw para que o código que chama possa tratar
+            }
+        }
+
+        // Dados - serão carregados do Supabase
+            let customers = [];
+            let products = [];
+            let sales = [];
+            let certificates = [];
+            let users = JSON.parse(localStorage.getItem('users') || '[]'); // Users ainda em localStorage
+            let appSettings = JSON.parse(localStorage.getItem('appSettings') || '{}'); // Settings ainda em localStorage
+            let coupons = [];
+            let loyaltyProgram = {};
             let currentPage = 'dashboard'; // Página atual
             let currentUser = null; // Usuário atual (será definido após login)
+            let useSupabase = true; // Flag para usar Supabase ou localStorage
             
             // Criar usuário admin padrão se não existir
             if (users.length === 0) {
@@ -2487,19 +2890,31 @@
             // Não inicializar currentUser automaticamente - apenas no login
             // currentUser será definido apenas após login bem-sucedido
             
-            // Remover duplicatas de produtos ao carregar
+            // Remover duplicatas de produtos ao carregar (por ID, nome+marca, ou nome se não tiver marca)
             if (products.length > 0) {
                 const uniqueProducts = [];
                 const seenIds = new Set();
+                const seenProducts = new Set(); // Para verificar nome+marca
+                
                 products.forEach(product => {
-                    if (product.id && !seenIds.has(product.id)) {
+                    // Criar chave única: ID ou nome+marca
+                    const productKey = product.id 
+                        ? `id:${product.id}` 
+                        : `name:${(product.name || '').toLowerCase().trim()}_brand:${(product.brand || '').toLowerCase().trim()}`;
+                    
+                    if (!seenProducts.has(productKey)) {
+                        seenProducts.add(productKey);
+                        if (product.id) {
                         seenIds.add(product.id);
+                        }
                         uniqueProducts.push(product);
                     }
                 });
+                
                 if (uniqueProducts.length !== products.length) {
                     products = uniqueProducts;
                     localStorage.setItem('products', JSON.stringify(products));
+                    console.log(`Removidas ${products.length - uniqueProducts.length} duplicatas de produtos`);
                 }
             }
             
@@ -2570,8 +2985,108 @@
             }
         }
 
+        // Função para remover duplicatas de produtos
+        function removeDuplicateProducts() {
+            if (products.length === 0) return false;
+            
+            const uniqueProducts = [];
+            const seenIds = new Set();
+            const seenNameBrand = new Map(); // Chave: nome+marca, Valor: índice no uniqueProducts
+            
+            products.forEach(product => {
+                if (!product.name) {
+                    // Produtos sem nome são ignorados
+                    return;
+                }
+                
+                // Criar chave única: nome + marca (case insensitive)
+                const nameKey = `${(product.name || '').toLowerCase().trim()}_${(product.brand || '').toLowerCase().trim()}`;
+                
+                // Verificar duplicata por ID
+                if (product.id && seenIds.has(product.id)) {
+                    return; // ID duplicado, ignorar
+                }
+                
+                // Verificar duplicata por nome+marca
+                if (seenNameBrand.has(nameKey)) {
+                    // Já existe produto com mesmo nome+marca
+                    const existingIndex = seenNameBrand.get(nameKey);
+                    const existing = uniqueProducts[existingIndex];
+                    
+                    // Prioridade: manter o que tem ID, ou o primeiro se ambos têm/não têm ID
+                    if (product.id && !existing.id) {
+                        // Substituir o sem ID pelo com ID
+                        uniqueProducts[existingIndex] = product;
+                        seenIds.add(product.id);
+                    } else if (!product.id && existing.id) {
+                        // Manter o existente que tem ID
+                        return;
+                    } else {
+                        // Ambos têm ou não têm ID, manter o primeiro (já está no array)
+                        return;
+                    }
+                } else {
+                    // Novo produto único
+                    if (product.id) {
+                        seenIds.add(product.id);
+                    }
+                    seenNameBrand.set(nameKey, uniqueProducts.length);
+                    uniqueProducts.push(product);
+                }
+            });
+            
+            // Se houve remoção de duplicatas, atualizar
+            if (uniqueProducts.length !== products.length) {
+                const removed = products.length - uniqueProducts.length;
+                products = uniqueProducts;
+                saveData();
+                console.log(`✅ Removidas ${removed} duplicatas de produtos`);
+                return true; // Indica que houve remoção
+            }
+            return false;
+        }
+
+        // Função para recarregar dados do localStorage
+        function reloadDataFromStorage() {
+            try {
+                const savedCustomers = localStorage.getItem('customers');
+                const savedProducts = localStorage.getItem('products');
+                const savedSales = localStorage.getItem('sales');
+                const savedCertificates = localStorage.getItem('certificates');
+                const savedUsers = localStorage.getItem('users');
+                const savedSettings = localStorage.getItem('appSettings');
+                const savedCoupons = localStorage.getItem('coupons');
+                const savedLoyalty = localStorage.getItem('loyaltyProgram');
+                
+                if (savedCustomers) customers = JSON.parse(savedCustomers);
+                if (savedProducts) {
+                    products = JSON.parse(savedProducts);
+                    // Remover duplicatas ao carregar
+                    removeDuplicateProducts();
+                }
+                if (savedSales) sales = JSON.parse(savedSales);
+                if (savedCertificates) certificates = JSON.parse(savedCertificates);
+                if (savedUsers) users = JSON.parse(savedUsers);
+                if (savedSettings) appSettings = JSON.parse(savedSettings);
+                if (savedCoupons) coupons = JSON.parse(savedCoupons);
+                if (savedLoyalty) loyaltyProgram = JSON.parse(savedLoyalty);
+                
+                // Atualizar métricas dos clientes
+                updateCustomerMetrics();
+            } catch (e) {
+                console.error('Erro ao recarregar dados:', e);
+            }
+        }
+
         // Inicializar
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Carregar dados do Supabase (com fallback para localStorage)
+            if (useSupabase) {
+                await loadDataFromSupabase();
+            } else {
+                reloadDataFromStorage();
+            }
+            
             // Carregar usuário do localStorage se existir
             const savedUser = localStorage.getItem('currentUser');
             if (savedUser) {
@@ -2602,6 +3117,21 @@
             } else {
                 showLogin();
             }
+            
+            // Recarregar dados quando a página ganha foco (útil para sincronização entre abas)
+            window.addEventListener('focus', () => {
+                reloadDataFromStorage();
+                if (currentPage === 'customers') {
+                    loadKanban();
+                    loadCustomers();
+                } else if (currentPage === 'products') {
+                    loadProducts();
+                } else if (currentPage === 'sales') {
+                    loadSales();
+                } else if (currentPage === 'dashboard') {
+                    loadDashboard();
+                }
+            });
         });
 
         function setupEventListeners() {
@@ -2672,7 +3202,25 @@
             });
 
             document.getElementById('add-customer-form-btn')?.addEventListener('click', () => openModal('customer-modal'));
-            document.getElementById('add-product-btn')?.addEventListener('click', () => openModal('product-modal'));
+            document.getElementById('add-product-btn')?.addEventListener('click', () => {
+                editingProductId = null;
+                document.getElementById('product-form').reset();
+                document.getElementById('product-image-base64').value = '';
+                document.getElementById('product-image-preview').style.display = 'none';
+                document.getElementById('product-image-input').value = '';
+                document.getElementById('product-modal-title').textContent = 'Novo Produto';
+                selectedImageFile = null;
+                openModal('product-modal');
+            });
+            document.getElementById('add-coupon-btn')?.addEventListener('click', () => {
+                document.getElementById('coupon-modal-title').textContent = 'Novo Cupom';
+                document.getElementById('coupon-form').reset();
+                openModal('coupon-modal');
+            });
+            document.getElementById('configure-loyalty-btn')?.addEventListener('click', () => {
+                loadLoyaltyConfig();
+                openModal('loyalty-modal');
+            });
             
             // Menu hambúrguer mobile
             const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
@@ -2681,6 +3229,11 @@
             
             if (mobileMenuToggle && sidebar && sidebarOverlay) {
                 mobileMenuToggle.addEventListener('click', () => {
+                    // Recarregar dados quando o menu mobile é aberto
+                    reloadDataFromStorage();
+                    // Aplicar permissões novamente para garantir que os itens apareçam
+                    applyPermissions();
+                    
                     sidebar.classList.toggle('active');
                     sidebarOverlay.classList.toggle('active');
                     mobileMenuToggle.classList.toggle('active');
@@ -2798,14 +3351,35 @@
                 loadDashboard();
             });
 
-            document.getElementById('product-form').addEventListener('submit', (e) => {
+            // Variável para controlar se está editando
+            let editingProductId = null;
+
+            document.getElementById('product-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
+                
+                // Desabilitar botão de submit durante upload
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+                
+                try {
                 const price = parseFloat(document.getElementById('product-price').value);
                 const cost = document.getElementById('product-cost').value ? 
                     parseFloat(document.getElementById('product-cost').value) : null;
                 
-                const product = {
-                    id: Date.now(),
+                    // Processar imagem
+                    let imageUrl = null;
+                    if (selectedImageFile) {
+                        // Se está editando, usar o ID existente, senão gerar um temporário
+                        const tempId = editingProductId || Date.now();
+                        imageUrl = await uploadImageToSupabase(selectedImageFile, tempId);
+                    } else if (document.getElementById('product-image-base64').value) {
+                        // Se já tem base64 (imagem antiga), manter
+                        imageUrl = document.getElementById('product-image-base64').value;
+                    }
+                    
+                    const productData = {
                     name: document.getElementById('product-name').value,
                     brand: document.getElementById('product-brand').value,
                     concentration: document.getElementById('product-concentration').value || '',
@@ -2814,25 +3388,547 @@
                     origin: document.getElementById('product-origin').value || '',
                     price: price,
                     cost: cost,
-                    stock: parseInt(document.getElementById('product-stock').value) || 0
+                        stock: parseInt(document.getElementById('product-stock').value) || 0,
+                        // Imagem - salvar apenas URL do Supabase (Storage)
+                        image: imageUrl,
+                        image_url: imageUrl && imageUrl.startsWith('http') ? imageUrl : null, // URL do Supabase Storage
+                        // image_base64 removido - não existe no banco, usar apenas image_url
+                    // Catálogo de Fragrâncias
+                    fragrance: {
+                        notesTop: document.getElementById('product-notes-top').value || '',
+                        notesHeart: document.getElementById('product-notes-heart').value || '',
+                        notesBase: document.getElementById('product-notes-base').value || '',
+                        family: document.getElementById('product-fragrance-family').value || '',
+                        duration: document.getElementById('product-duration').value || '',
+                        projection: document.getElementById('product-projection').value || '',
+                        occasion: document.getElementById('product-occasion').value || '',
+                        description: document.getElementById('product-description').value || ''
+                    }
                 };
                 
-                // Verificar se já existe um produto com o mesmo nome e marca
-                const existingProduct = products.find(p => 
-                    p.name === product.name && 
-                    p.brand === product.brand
-                );
+                if (editingProductId) {
+                    // Editar produto existente
+                    if (useSupabase) {
+                        try {
+                            // Preparar dados para atualização no Supabase
+                            const supabaseUpdate = {
+                                name: productData.name,
+                                brand: productData.brand || null,
+                                concentration: productData.concentration || null,
+                                volume: productData.volume || null,
+                                batch: productData.batch || null,
+                                origin: productData.origin || null,
+                                price: productData.price,
+                                cost: productData.cost || null,
+                                stock_quantity: productData.stock || 0,
+                                image_url: productData.image_url || null,
+                                // image_base64 removido - coluna não existe na tabela
+                                updated_at: new Date().toISOString()
+                            };
+
+                            console.log('💾 Atualizando produto no Supabase...', supabaseUpdate);
+                            
+                            // Atualizar no Supabase
+                            const updatedProduct = await supabaseRequest('products', 'PATCH', supabaseUpdate, `?id=eq.${editingProductId}`);
+                            
+                            if (updatedProduct) {
+                                console.log('✅ Produto atualizado no Supabase');
+                                
+                                // Recarregar produtos do Supabase
+                                await loadDataFromSupabase();
+                                
+                                closeModal('product-modal');
+                                loadProducts();
+                                editingProductId = null;
+                                selectedImageFile = null;
+                                
+                                submitBtn.disabled = false;
+                                submitBtn.innerHTML = originalText;
+                                
+                                alert('✅ Produto atualizado com sucesso!');
+                            } else {
+                                throw new Error('Produto não foi atualizado no Supabase');
+                            }
+                        } catch (error) {
+                            console.error('❌ Erro ao atualizar produto no Supabase:', error);
+                            
+                            // Fallback: atualizar localmente
+                            const productIndex = products.findIndex(p => p.id === editingProductId);
+                            if (productIndex !== -1) {
+                                products[productIndex] = {
+                                    ...products[productIndex],
+                                    ...productData,
+                                    id: editingProductId
+                                };
+                                saveData();
+                                closeModal('product-modal');
+                                loadProducts();
+                                editingProductId = null;
+                                selectedImageFile = null;
+                                
+                                submitBtn.disabled = false;
+                                submitBtn.innerHTML = originalText;
+                                
+                                alert('⚠️ Produto atualizado localmente. Erro ao conectar com Supabase.');
+                            } else {
+                                submitBtn.disabled = false;
+                                submitBtn.innerHTML = originalText;
+                            }
+                        }
+                    } else {
+                        // Modo localStorage apenas
+                        const productIndex = products.findIndex(p => p.id === editingProductId);
+                        if (productIndex !== -1) {
+                            const existingProduct = products.find(p => 
+                                p.id !== editingProductId &&
+                                p.name && productData.name &&
+                                p.name.toLowerCase().trim() === productData.name.toLowerCase().trim() && 
+                                ((!p.brand && !productData.brand) || (p.brand && productData.brand && p.brand.toLowerCase().trim() === productData.brand.toLowerCase().trim()))
+                            );
+                            
+                            if (existingProduct) {
+                                alert(`Já existe outro produto com este nome e marca!\n\nProduto existente: ${existingProduct.name}${existingProduct.brand ? ' - ' + existingProduct.brand : ''}`);
+                                submitBtn.disabled = false;
+                                submitBtn.innerHTML = originalText;
+                                return;
+                            }
+                            
+                            products[productIndex] = {
+                                ...products[productIndex],
+                                ...productData,
+                                id: editingProductId
+                            };
+                            saveData();
+                            closeModal('product-modal');
+                            loadProducts();
+                            editingProductId = null;
+                            selectedImageFile = null;
+                            
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalText;
+                        }
+                    }
+                } else {
+                    // Criar novo produto
+                    if (useSupabase) {
+                        try {
+                            // Preparar dados para o Supabase
+                            const supabaseProduct = {
+                                name: productData.name,
+                                brand: productData.brand || null,
+                                description: null,
+                                concentration: productData.concentration || null,
+                                volume: productData.volume || null,
+                                batch: productData.batch || null,
+                                origin: productData.origin || null,
+                                price: productData.price,
+                                cost: productData.cost || null,
+                                stock_quantity: productData.stock || 0,
+                                image_url: productData.image_url || null,
+                                // image_base64 removido - coluna não existe na tabela
+                                is_active: true,
+                                created_at: new Date().toISOString(),
+                                updated_at: new Date().toISOString()
+                            };
+
+                            console.log('💾 Salvando produto no Supabase...', supabaseProduct);
+                            
+                            // Salvar no Supabase
+                            let newProduct;
+                            try {
+                                newProduct = await supabaseRequest('products', 'POST', supabaseProduct);
+                                console.log('📦 Resposta do Supabase:', newProduct);
+                            } catch (reqError) {
+                                console.error('❌ Erro na requisição:', reqError);
+                                throw reqError;
+                            }
+                            
+                            if (newProduct && (Array.isArray(newProduct) ? newProduct.length > 0 : newProduct.id)) {
+                                const savedProduct = Array.isArray(newProduct) ? newProduct[0] : newProduct;
+                                console.log('✅ Produto salvo no Supabase:', savedProduct);
+                                
+                                // Recarregar produtos do Supabase
+                                await loadDataFromSupabase();
+                                
+                                closeModal('product-modal');
+                                await loadProducts();
+                                selectedImageFile = null;
+                                
+                                // Reabilitar botão
+                                submitBtn.disabled = false;
+                                submitBtn.innerHTML = originalText;
+                                
+                                alert('✅ Produto salvo com sucesso no Supabase!');
+                            } else {
+                                console.error('❌ Produto não foi retornado corretamente:', newProduct);
+                                throw new Error('Produto não foi retornado pelo Supabase. Verifique o console para mais detalhes.');
+                            }
+                        } catch (error) {
+                            console.error('❌ Erro ao salvar produto no Supabase:', error);
+                            
+                            // Fallback: salvar localmente
+                            console.log('⚠️ Usando localStorage como fallback...');
+                            const product = {
+                                id: Date.now(),
+                                ...productData
+                            };
+                            
+                            const existingProduct = products.find(p => 
+                                p.name && product.name &&
+                                p.name.toLowerCase().trim() === product.name.toLowerCase().trim() && 
+                                ((!p.brand && !product.brand) || (p.brand && product.brand && p.brand.toLowerCase().trim() === product.brand.toLowerCase().trim()))
+                            );
+                            
+                            if (existingProduct) {
+                                alert(`Já existe um produto com este nome e marca!\n\nProduto existente: ${existingProduct.name}${existingProduct.brand ? ' - ' + existingProduct.brand : ''}`);
+                                submitBtn.disabled = false;
+                                submitBtn.innerHTML = originalText;
+                                return;
+                            }
+                            
+                            products.push(product);
+                            saveData();
+                            closeModal('product-modal');
+                            loadProducts();
+                            selectedImageFile = null;
+                            
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalText;
+                            
+                            alert('⚠️ Produto salvo localmente. Erro ao conectar com Supabase:\n' + error.message);
+                        }
+                    } else {
+                        // Modo localStorage apenas
+                        const product = {
+                            id: Date.now(),
+                            ...productData
+                        };
+                        
+                        const existingProduct = products.find(p => 
+                            p.name && product.name &&
+                            p.name.toLowerCase().trim() === product.name.toLowerCase().trim() && 
+                            ((!p.brand && !product.brand) || (p.brand && product.brand && p.brand.toLowerCase().trim() === product.brand.toLowerCase().trim()))
+                        );
+                        
+                        if (existingProduct) {
+                            alert(`Já existe um produto com este nome e marca!\n\nProduto existente: ${existingProduct.name}${existingProduct.brand ? ' - ' + existingProduct.brand : ''}`);
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalText;
+                            return;
+                        }
+                        
+                        products.push(product);
+                        saveData();
+                        closeModal('product-modal');
+                        loadProducts();
+                        selectedImageFile = null;
+                        
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    }
+                }
                 
-                if (existingProduct) {
-                    alert('Já existe um produto com este nome e marca!');
+                // Reabilitar botão
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+                } catch (error) {
+                    console.error('Erro ao salvar produto:', error);
+                    alert('Erro ao salvar produto. Tente novamente.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            });
+
+            // Função para editar produto
+            window.editProduct = function(productId) {
+                const product = products.find(p => p.id === productId);
+                if (!product) return;
+                
+                editingProductId = productId;
+                
+                // Preencher formulário
+                document.getElementById('product-name').value = product.name || '';
+                document.getElementById('product-brand').value = product.brand || '';
+                document.getElementById('product-concentration').value = product.concentration || '';
+                document.getElementById('product-volume').value = product.volume || '';
+                document.getElementById('product-batch').value = product.batch || '';
+                document.getElementById('product-origin').value = product.origin || '';
+                document.getElementById('product-price').value = product.price || '';
+                document.getElementById('product-cost').value = product.cost || '';
+                document.getElementById('product-stock').value = product.stock || 0;
+                
+                // Imagem - usar apenas URL do Supabase Storage
+                const imageUrl = product.image_url || product.image;
+                if (imageUrl) {
+                    document.getElementById('product-image-base64').value = imageUrl;
+                    document.getElementById('product-image-preview-img').src = imageUrl;
+                    document.getElementById('product-image-preview').style.display = 'flex';
+                } else {
+                    document.getElementById('product-image-base64').value = '';
+                    document.getElementById('product-image-preview').style.display = 'none';
+                }
+                selectedImageFile = null;
+                
+                // Fragrâncias
+                if (product.fragrance) {
+                    document.getElementById('product-notes-top').value = product.fragrance.notesTop || '';
+                    document.getElementById('product-notes-heart').value = product.fragrance.notesHeart || '';
+                    document.getElementById('product-notes-base').value = product.fragrance.notesBase || '';
+                    document.getElementById('product-fragrance-family').value = product.fragrance.family || '';
+                    document.getElementById('product-duration').value = product.fragrance.duration || '';
+                    document.getElementById('product-projection').value = product.fragrance.projection || '';
+                    document.getElementById('product-occasion').value = product.fragrance.occasion || '';
+                    document.getElementById('product-description').value = product.fragrance.description || '';
+                }
+                
+                // Atualizar título do modal
+                document.getElementById('product-modal-title').textContent = 'Editar Produto';
+                
+                // Abrir modal
+                openModal('product-modal');
+            };
+
+            // Função para excluir produto
+            window.deleteProduct = async function(productId) {
+                const product = products.find(p => p.id === productId);
+                if (!product) return;
+                
+                if (confirm(`Tem certeza que deseja excluir o produto "${product.name}"?\n\nEsta ação não pode ser desfeita!`)) {
+                    // Verificar se o produto está em alguma venda
+                    const productInSales = sales.some(sale => 
+                        sale.items && sale.items.some(item => item.productId === productId)
+                    );
+                    
+                    if (productInSales) {
+                        if (!confirm('Este produto está associado a vendas. Deseja realmente excluí-lo?\n\nO produto será removido, mas as vendas serão mantidas.')) {
+                            return;
+                        }
+                    }
+                    
+                    if (useSupabase) {
+                        try {
+                            // Deletar no Supabase (marcar como inativo ao invés de deletar)
+                            await supabaseRequest('products', 'PATCH', {
+                                is_active: false,
+                                updated_at: new Date().toISOString()
+                            }, `?id=eq.${productId}`);
+                            
+                            console.log('✅ Produto desativado no Supabase');
+                            await loadDataFromSupabase();
+                            loadProducts();
+                            loadDashboard();
+                        } catch (error) {
+                            console.error('Erro ao deletar produto no Supabase:', error);
+                            // Fallback: remover localmente
+                            products = products.filter(p => p.id !== productId);
+                            saveData();
+                            loadProducts();
+                            loadDashboard();
+                        }
+                    } else {
+                        products = products.filter(p => p.id !== productId);
+                        saveData();
+                        loadProducts();
+                        loadDashboard();
+                    }
+                }
+            };
+            
+            // SUPABASE_CONFIG já foi declarado acima, não precisa redeclarar
+
+            // Função para comprimir imagem
+            function compressImage(file, maxWidth = 800, quality = 0.7) {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+                            
+                            // Redimensionar se necessário
+                            if (width > maxWidth) {
+                                height = (height * maxWidth) / width;
+                                width = maxWidth;
+                            }
+                            
+                            canvas.width = width;
+                            canvas.height = height;
+                            
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            // Converter para base64 com qualidade reduzida
+                            const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+                            resolve(compressedBase64);
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // Função para fazer upload de imagem para o Supabase Storage
+            async function uploadImageToSupabase(file, productId) {
+                try {
+                    // Validar tamanho do arquivo (máximo 2MB antes de compressão)
+                    if (file.size > 2 * 1024 * 1024) {
+                        console.warn('Arquivo muito grande, comprimindo...');
+                    }
+
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `${productId}_${Date.now()}.${fileExt}`;
+                    const filePath = `${fileName}`;
+
+                    // Comprimir imagem antes de fazer upload
+                    const compressedBase64 = await compressImage(file, 800, 0.7);
+                    
+                    // Converter base64 para blob
+                    const base64Response = await fetch(compressedBase64);
+                    const blob = await base64Response.blob();
+                    
+                    // URL correta para upload no Supabase Storage
+                    const uploadUrl = `${SUPABASE_CONFIG.url}/storage/v1/object/${SUPABASE_CONFIG.storageBucket}/${filePath}`;
+                    
+                    // Tentar upload com método correto
+                    const response = await fetch(uploadUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Content-Type': blob.type || 'image/jpeg',
+                            'x-upsert': 'true'
+                        },
+                        body: blob
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.warn('⚠️ Upload para Supabase falhou:', errorText);
+                        console.info('💡 Usando base64 comprimido (reduzido para economizar espaço)');
+                        // Retornar base64 comprimido (já foi comprimido acima)
+                        return compressedBase64;
+                    }
+
+                    // Retornar URL pública da imagem
+                    const imageUrl = `${SUPABASE_CONFIG.url}/storage/v1/object/public/${SUPABASE_CONFIG.storageBucket}/${filePath}`;
+                    console.log('Imagem enviada com sucesso:', imageUrl);
+                    return imageUrl;
+                } catch (error) {
+                    console.error('Erro ao fazer upload da imagem:', error);
+                    // Fallback para base64 comprimido
+                    try {
+                        const compressedBase64 = await compressImage(file, 600, 0.6);
+                        return compressedBase64;
+                    } catch (compressError) {
+                        console.error('Erro ao comprimir imagem:', compressError);
+                        // Último recurso: base64 sem compressão (mas avisar)
+                        const reader = new FileReader();
+                        return new Promise((resolve) => {
+                            reader.onload = function(e) {
+                                const base64 = e.target.result;
+                                // Verificar tamanho
+                                if (base64.length > 500000) { // ~500KB
+                                    console.warn('⚠️ Imagem muito grande! Considere usar imagens menores.');
+                                }
+                                resolve(base64);
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                    }
+                }
+            }
+
+            // Variável para armazenar arquivo selecionado
+            let selectedImageFile = null;
+
+            // Funções para upload de imagem
+            window.handleImageUpload = async function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    selectedImageFile = file;
+                    
+                    // Mostrar preview imediatamente
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const base64 = e.target.result;
+                        document.getElementById('product-image-preview-img').src = base64;
+                        document.getElementById('product-image-preview').style.display = 'flex';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            
+            window.removeProductImage = function() {
+                document.getElementById('product-image-base64').value = '';
+                document.getElementById('product-image-preview').style.display = 'none';
+                document.getElementById('product-image-input').value = '';
+                selectedImageFile = null;
+            };
+
+            // Variável global para cupom aplicado
+            let appliedCoupon = null;
+            
+            window.applyCoupon = function() {
+                const code = document.getElementById('sale-coupon-code').value.toUpperCase();
+                const messageDiv = document.getElementById('coupon-message');
+                
+                if (!code) {
+                    messageDiv.innerHTML = '<span style="color: #ef4444;">Digite um código de cupom</span>';
                     return;
                 }
                 
-                products.push(product);
-                saveData();
-                closeModal('product-modal');
-                loadProducts();
-            });
+                const coupon = coupons.find(c => c.code === code);
+                if (!coupon) {
+                    messageDiv.innerHTML = '<span style="color: #ef4444;">Cupom não encontrado</span>';
+                    appliedCoupon = null;
+                    updateSaleTotal();
+                    return;
+                }
+                
+                // Verificar validade
+                const now = new Date();
+                const endDate = new Date(coupon.endDate);
+                if (endDate < now) {
+                    messageDiv.innerHTML = '<span style="color: #ef4444;">Cupom expirado</span>';
+                    appliedCoupon = null;
+                    updateSaleTotal();
+                    return;
+                }
+                
+                // Verificar limite de usos
+                if (coupon.usageLimit && coupon.usedCount >= coupon.usageLimit) {
+                    messageDiv.innerHTML = '<span style="color: #ef4444;">Cupom esgotado</span>';
+                    appliedCoupon = null;
+                    updateSaleTotal();
+                    return;
+                }
+                
+                // Calcular subtotal para verificar valor mínimo
+                let subtotal = 0;
+                document.querySelectorAll('.sale-item-row').forEach(row => {
+                    const productId = parseInt(row.querySelector('.sale-item-product').value);
+                    const quantity = parseInt(row.querySelector('.sale-item-quantity').value);
+                    if (productId && quantity) {
+                        const product = products.find(p => p.id === productId);
+                        if (product) {
+                            subtotal += product.price * quantity;
+                        }
+                    }
+                });
+                
+                if (coupon.minPurchase && subtotal < coupon.minPurchase) {
+                    messageDiv.innerHTML = `<span style="color: #ef4444;">Valor mínimo: R$ ${coupon.minPurchase.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>`;
+                    appliedCoupon = null;
+                    updateSaleTotal();
+                    return;
+                }
+                
+                appliedCoupon = coupon;
+                messageDiv.innerHTML = `<span style="color: #D4AF37;">✓ Cupom aplicado: ${coupon.type === 'percentage' ? coupon.value + '%' : 'R$ ' + coupon.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>`;
+                updateSaleTotal();
+            };
 
             document.getElementById('sale-form').addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -2848,14 +3944,14 @@
                     alert('Adicione pelo menos um produto');
                     return;
                 }
-                let total = 0;
+                let subtotal = 0;
                 const saleItems = [];
                 
                 items.forEach(item => {
                     const product = products.find(p => p.id === item.productId);
                     if (product) {
                         const itemTotal = product.price * item.quantity;
-                        total += itemTotal;
+                        subtotal += itemTotal;
                         product.stock = Math.max(0, product.stock - item.quantity);
                         
                         saleItems.push({
@@ -2867,12 +3963,30 @@
                     }
                 });
                 
+                // Aplicar desconto do cupom
+                let discount = 0;
+                if (appliedCoupon) {
+                    if (appliedCoupon.type === 'percentage') {
+                        discount = subtotal * (appliedCoupon.value / 100);
+                    } else {
+                        discount = Math.min(appliedCoupon.value, subtotal);
+                    }
+                    
+                    // Incrementar contador de uso
+                    appliedCoupon.usedCount = (appliedCoupon.usedCount || 0) + 1;
+                }
+                
+                const total = subtotal - discount;
+                
                 const sale = {
                     id: Date.now(),
                     number: 'V' + Date.now().toString().slice(-6),
                     customerId: parseInt(document.getElementById('sale-customer').value) || null,
                     items: saleItems,
+                    subtotal: subtotal,
+                    discount: discount,
                     total,
+                    couponCode: appliedCoupon ? appliedCoupon.code : null,
                     date: new Date().toISOString(),
                     status: 'completed'
                 };
@@ -2889,8 +4003,20 @@
                             customer.is_recurring = true;
                             customer.status = 'recorrente';
                         }
+                        
+                        // Adicionar pontos de fidelidade
+                        if (loyaltyProgram && loyaltyProgram.pointsPerReal) {
+                            const pointsEarned = Math.floor(total * loyaltyProgram.pointsPerReal);
+                            customer.loyaltyPoints = (customer.loyaltyPoints || 0) + pointsEarned;
+                            customer.loyaltyLevel = getLoyaltyLevel(customer.loyaltyPoints);
+                        }
                     }
                 }
+                
+                // Limpar cupom aplicado
+                appliedCoupon = null;
+                document.getElementById('sale-coupon-code').value = '';
+                document.getElementById('coupon-message').innerHTML = '';
                 
                 // Gerar certificados automaticamente para cada produto vendido
                 saleItems.forEach(item => {
@@ -2911,6 +4037,20 @@
             });
 
             document.getElementById('add-sale-item').addEventListener('click', addSaleItem);
+            
+            // Limpar cupom ao fechar modal de venda
+            const saleModal = document.getElementById('sale-modal');
+            if (saleModal) {
+                saleModal.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal') || e.target.classList.contains('modal-close')) {
+                        appliedCoupon = null;
+                        document.getElementById('sale-coupon-code').value = '';
+                        if (document.getElementById('coupon-message')) {
+                            document.getElementById('coupon-message').innerHTML = '';
+                        }
+                    }
+                });
+            }
 
             // Formulário de usuários
             document.getElementById('user-form').addEventListener('submit', (e) => {
@@ -3008,13 +4148,19 @@
                 return;
             }
             
+            // Recarregar dados do localStorage antes de carregar a página
+            reloadDataFromStorage();
+            
             currentPage = page; // Atualizar página atual
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
                 if (item.dataset.page === page) item.classList.add('active');
             });
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(`${page}-page`).classList.add('active');
+            const pageElement = document.getElementById(`${page}-page`);
+            if (pageElement) {
+                pageElement.classList.add('active');
+            }
             
             // Aplicar permissões novamente ao mudar de página
             applyPermissions();
@@ -3028,6 +4174,8 @@
                 case 'products': loadProducts(); break;
                 case 'sales': loadSales(); break;
                 case 'financial': loadFinancial(); break;
+                case 'coupons': loadCoupons(); break;
+                case 'loyalty': loadLoyalty(); break;
                 case 'recurrence': loadRecurrence(); break;
                 case 'profile': loadProfile(); break;
                 case 'settings': loadSettings(); break;
@@ -3265,7 +4413,15 @@
             });
         }
 
-        function loadCustomers() {
+        async function loadCustomers() {
+            // Carregar do Supabase se disponível
+            if (useSupabase) {
+                await loadDataFromSupabase();
+            } else {
+                // Recarregar dados do localStorage antes de exibir
+                reloadDataFromStorage();
+            }
+            
             const tbody = document.getElementById('customers-table-body');
             if (!tbody) return;
             tbody.innerHTML = '';
@@ -3294,25 +4450,20 @@
             });
         }
 
-        function loadProducts() {
+        async function loadProducts() {
+            // Carregar do Supabase se disponível
+            if (useSupabase) {
+                await loadDataFromSupabase();
+            } else {
+                // Recarregar dados do localStorage antes de exibir
+                reloadDataFromStorage();
+            }
+            
             const grid = document.getElementById('products-grid');
             if (!grid) return;
             
-            // Remover duplicatas baseado no ID
-            const uniqueProducts = [];
-            const seenIds = new Set();
-            products.forEach(product => {
-                if (!seenIds.has(product.id)) {
-                    seenIds.add(product.id);
-                    uniqueProducts.push(product);
-                }
-            });
-            
-            // Atualizar o array de produtos se houver duplicatas
-            if (uniqueProducts.length !== products.length) {
-                products = uniqueProducts;
-                saveData();
-            }
+            // Remover duplicatas antes de exibir (sempre verificar)
+            removeDuplicateProducts();
             
             grid.innerHTML = '';
             if (products.length === 0) {
@@ -3367,14 +4518,55 @@
                     `;
                 }
                 
+                // Imagem do produto
+                let imageHtml = '';
+                if (product.image) {
+                    imageHtml = `
+                        <div style="width: 100%; height: 200px; margin-bottom: 1rem; border-radius: 8px; overflow: hidden; background: rgba(26, 26, 26, 0.5);">
+                            <img src="${product.image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    `;
+                } else {
+                    imageHtml = `
+                        <div style="width: 100%; height: 200px; margin-bottom: 1rem; border-radius: 8px; background: rgba(26, 26, 26, 0.5); display: flex; align-items: center; justify-content: center; color: rgba(245, 243, 239, 0.3);">
+                            <i class="fas fa-image" style="font-size: 3rem;"></i>
+                        </div>
+                    `;
+                }
+                
+                // Informações do catálogo de fragrâncias
+                let fragranceHtml = '';
+                if (product.fragrance) {
+                    const frag = product.fragrance;
+                    fragranceHtml = `
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(212, 175, 55, 0.2);">
+                            ${frag.family ? `<div style="margin-bottom: 0.5rem;"><span style="color: rgba(245, 243, 239, 0.6); font-size: 0.75rem;">Família:</span> <span style="color: #D4AF37; font-size: 0.875rem; text-transform: capitalize;">${frag.family}</span></div>` : ''}
+                            ${frag.duration ? `<div style="margin-bottom: 0.5rem;"><span style="color: rgba(245, 243, 239, 0.6); font-size: 0.75rem;">Duração:</span> <span style="font-size: 0.875rem;">${frag.duration}</span></div>` : ''}
+                            ${frag.projection ? `<div style="margin-bottom: 0.5rem;"><span style="color: rgba(245, 243, 239, 0.6); font-size: 0.75rem;">Projeção:</span> <span style="font-size: 0.875rem;">${frag.projection}</span></div>` : ''}
+                        </div>
+                    `;
+                }
+                
                 card.innerHTML = `
-                    ${isLowStock ? '<div style="position: absolute; top: 8px; right: 8px; background: ' + (isOutOfStock ? '#ef4444' : '#fbbf24') + '; color: #0F0F0F; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">' + (isOutOfStock ? 'ESGOTADO' : 'BAIXO') + '</div>' : ''}
+                    <div style="position: relative;">
+                        ${isLowStock ? '<div style="position: absolute; top: 8px; right: 8px; background: ' + (isOutOfStock ? '#ef4444' : '#fbbf24') + '; color: #0F0F0F; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; z-index: 10;">' + (isOutOfStock ? 'ESGOTADO' : 'BAIXO') + '</div>' : ''}
+                        <div style="position: absolute; top: 8px; left: 8px; display: flex; gap: 0.5rem; z-index: 10;">
+                            <button onclick="editProduct(${product.id})" style="background: rgba(212, 175, 55, 0.2); border: 1px solid rgba(212, 175, 55, 0.5); color: #D4AF37; padding: 0.5rem; border-radius: 6px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='rgba(212, 175, 55, 0.3)'; this.style.borderColor='#D4AF37'" onmouseout="this.style.background='rgba(212, 175, 55, 0.2)'; this.style.borderColor='rgba(212, 175, 55, 0.5)'" title="Editar produto">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteProduct(${product.id})" style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #ef4444; padding: 0.5rem; border-radius: 6px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.3)'; this.style.borderColor='#ef4444'" onmouseout="this.style.background='rgba(239, 68, 68, 0.2)'; this.style.borderColor='rgba(239, 68, 68, 0.5)'" title="Excluir produto">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    ${imageHtml}
                     <h3>${product.name}</h3>
                     ${product.brand ? `<p style="color: rgba(245, 243, 239, 0.6); font-size: 0.875rem;">${product.brand}</p>` : ''}
                     <div class="product-info">
                         <span>Preço:</span>
                         <strong>R$ ${product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
                     </div>
+                    ${fragranceHtml}
                     ${product.cost ? `
                     <div class="product-info">
                         <span>Custo:</span>
@@ -3477,16 +4669,52 @@
         }
 
         function calculateTotal() {
-            let total = 0;
+            let subtotal = 0;
             document.querySelectorAll('.sale-item-row').forEach(row => {
                 const select = row.querySelector('.sale-item-product');
                 const quantity = parseInt(row.querySelector('.sale-item-quantity').value) || 0;
                 const price = parseFloat(select.selectedOptions[0]?.dataset.price || 0);
-                total += price * quantity;
+                subtotal += price * quantity;
             });
-            document.getElementById('sale-total').textContent = 
-                total.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            
+            // Calcular desconto do cupom
+            let discount = 0;
+            if (appliedCoupon) {
+                if (appliedCoupon.type === 'percentage') {
+                    discount = subtotal * (appliedCoupon.value / 100);
+                } else {
+                    discount = Math.min(appliedCoupon.value, subtotal);
+                }
+            }
+            
+            const total = subtotal - discount;
+            
+            // Atualizar exibição
+            const subtotalEl = document.getElementById('sale-subtotal');
+            const discountRowEl = document.getElementById('sale-discount-row');
+            const discountEl = document.getElementById('sale-discount');
+            const totalEl = document.getElementById('sale-total');
+            
+            if (subtotalEl) {
+                subtotalEl.textContent = subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            }
+            
+            if (discountRowEl && discountEl) {
+                if (discount > 0) {
+                    discountRowEl.style.display = 'flex';
+                    discountEl.textContent = '- R$ ' + discount.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                } else {
+                    discountRowEl.style.display = 'none';
+                }
+            }
+            
+            if (totalEl) {
+                totalEl.textContent = total.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            }
         }
+        
+        // Alias para compatibilidade
+        window.updateSaleTotal = calculateTotal;
 
         function openModal(id) {
             document.getElementById(id).classList.add('active');
@@ -3511,12 +4739,160 @@
             }
         }
 
-        function saveData() {
-            localStorage.setItem('customers', JSON.stringify(customers));
+        // Função para carregar dados do Supabase
+        async function loadDataFromSupabase() {
+            try {
+                console.log('🔄 Carregando dados do Supabase...');
+                
+                // Carregar produtos
+                const supabaseProducts = await supabaseRequest('products', 'GET', null, '?is_active=eq.true&order=created_at.desc');
+                if (supabaseProducts) {
+                    products = supabaseProducts.map(p => ({
+                        id: p.id,
+                        name: p.name,
+                        brand: p.brand,
+                        concentration: p.concentration,
+                        volume: p.volume,
+                        batch: p.batch,
+                        origin: p.origin,
+                        price: parseFloat(p.price),
+                        cost: p.cost ? parseFloat(p.cost) : null,
+                        stock: p.stock_quantity || 0,
+                        stock_quantity: p.stock_quantity || 0,
+                        image: p.image_url || null, // Usar apenas image_url do Supabase
+                        image_url: p.image_url,
+                        image_base64: null, // Não existe no banco
+                        is_active: p.is_active !== false,
+                        fragrance: p.fragrance || null
+                    }));
+                    console.log(`✅ ${products.length} produtos carregados do Supabase`);
+                }
+
+                // Carregar clientes
+                const supabaseCustomers = await supabaseRequest('customers', 'GET', null, '?order=created_at.desc');
+                if (supabaseCustomers) {
+                    customers = supabaseCustomers;
+                    console.log(`✅ ${customers.length} clientes carregados do Supabase`);
+                }
+
+                // Carregar vendas
+                const supabaseSales = await supabaseRequest('sales', 'GET', null, '?order=created_at.desc');
+                if (supabaseSales) {
+                    sales = supabaseSales;
+                    console.log(`✅ ${sales.length} vendas carregadas do Supabase`);
+                }
+
+                // Carregar cupons
+                const supabaseCoupons = await supabaseRequest('coupons', 'GET', null, '?is_active=eq.true&order=created_at.desc');
+                if (supabaseCoupons) {
+                    coupons = supabaseCoupons;
+                    console.log(`✅ ${coupons.length} cupons carregados do Supabase`);
+                }
+
+                // Salvar no localStorage como cache
+                try {
             localStorage.setItem('products', JSON.stringify(products));
+                    localStorage.setItem('customers', JSON.stringify(customers));
+                    localStorage.setItem('sales', JSON.stringify(sales));
+                    localStorage.setItem('coupons', JSON.stringify(coupons));
+                } catch (e) {
+                    console.warn('Não foi possível salvar cache no localStorage:', e);
+                }
+
+            } catch (error) {
+                console.error('Erro ao carregar dados do Supabase:', error);
+                // Fallback para localStorage
+                console.log('⚠️ Usando dados do localStorage como fallback');
+                loadDataFromLocalStorage();
+            }
+        }
+
+        // Função para carregar dados do localStorage (fallback)
+        function loadDataFromLocalStorage() {
+            customers = JSON.parse(localStorage.getItem('customers') || '[]');
+            products = JSON.parse(localStorage.getItem('products') || '[]');
+            sales = JSON.parse(localStorage.getItem('sales') || '[]');
+            certificates = JSON.parse(localStorage.getItem('certificates') || '[]');
+            coupons = JSON.parse(localStorage.getItem('coupons') || '[]');
+            loyaltyProgram = JSON.parse(localStorage.getItem('loyaltyProgram') || '{}');
+        }
+
+        // Função para salvar dados (Supabase + localStorage como cache)
+        async function saveData() {
+            try {
+                if (useSupabase) {
+                    // Salvar no Supabase (produtos são salvos individualmente)
+                    // Esta função salva apenas no localStorage como cache
+                    console.log('💾 Salvando cache no localStorage...');
+                }
+
+                // Comprimir imagens base64 grandes antes de salvar
+                const compressedProducts = products.map(product => {
+                    if (product.image && product.image.startsWith('data:image')) {
+                        if (product.image.length > 300000) {
+                            console.warn(`Imagem do produto ${product.name} muito grande, será comprimida na próxima edição`);
+                        }
+                    }
+                    return product;
+                });
+
+                // Salvar no localStorage como cache
+                localStorage.setItem('customers', JSON.stringify(customers));
+                localStorage.setItem('products', JSON.stringify(compressedProducts));
             localStorage.setItem('sales', JSON.stringify(sales));
             localStorage.setItem('certificates', JSON.stringify(certificates));
             localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('coupons', JSON.stringify(coupons));
+                localStorage.setItem('loyaltyProgram', JSON.stringify(loyaltyProgram));
+            } catch (error) {
+                if (error.name === 'QuotaExceededError') {
+                    console.error('⚠️ LocalStorage cheio! Limpando imagens grandes...');
+                    
+                    // Estratégia: Remover imagens base64 grandes, manter apenas URLs do Supabase
+                    let productsCleaned = products.map(product => {
+                        // Se tem imagem base64 grande, remover
+                        if (product.image && product.image.startsWith('data:image')) {
+                            if (product.image.length > 150000) { // >150KB
+                                console.log(`Removendo imagem grande do produto: ${product.name}`);
+                                return { 
+                                    ...product, 
+                                    image: null, 
+                                    image_base64: null,
+                                    image_url: product.image_url || null // Manter URL se existir
+                                };
+                            }
+                        }
+                        return product;
+                    });
+                    
+                    // Tentar salvar novamente
+                    try {
+                        localStorage.setItem('products', JSON.stringify(productsCleaned));
+                        products = productsCleaned;
+                        console.log('✅ Imagens grandes removidas. Espaço liberado.');
+                        alert('⚠️ Espaço no navegador estava cheio!\n\nImagens grandes foram removidas automaticamente.\n\nDica: Configure o Supabase Storage para salvar imagens online e evitar este problema.');
+                    } catch (e) {
+                        // Se ainda falhar, remover TODAS as imagens base64
+                        console.error('Ainda sem espaço. Removendo todas as imagens base64...');
+                        productsCleaned = products.map(product => ({
+                            ...product,
+                            image: product.image_url || null, // Manter apenas URL
+                            image_base64: null
+                        }));
+                        try {
+                            localStorage.setItem('products', JSON.stringify(productsCleaned));
+                            products = productsCleaned;
+                            alert('⚠️ Espaço crítico! Todas as imagens base64 foram removidas.\n\nConfigure o Supabase Storage para salvar imagens online.');
+                        } catch (e2) {
+                            console.error('Erro crítico: Não foi possível salvar dados:', e2);
+                            alert('❌ Erro crítico: Não foi possível salvar dados.\n\nLimpe o cache do navegador ou remova dados antigos manualmente.');
+                        }
+                    }
+                } else {
+                    console.error('Erro ao salvar dados:', error);
+                    alert('Erro ao salvar dados: ' + error.message);
+                }
+            }
         }
 
         function deleteCustomer(id) {
@@ -4625,13 +6001,21 @@ Este certificado confirma a autenticidade e procedência do produto, refletindo 
         }
 
         function applyPermissions() {
-            if (!currentUser) return;
+            if (!currentUser) {
+                // Se não há usuário, esconder todos os itens exceto login
+                document.querySelectorAll('.nav-item[data-permission]').forEach(item => {
+                    item.style.display = 'none';
+                });
+                return;
+            }
             
             // Esconder/mostrar itens do menu baseado em permissões
             document.querySelectorAll('.nav-item[data-permission]').forEach(item => {
                 const permission = item.dataset.permission;
                 if (hasPermission(permission)) {
+                    // Garantir que o item seja visível (remover display: none)
                     item.style.display = '';
+                    item.style.visibility = 'visible';
                 } else {
                     item.style.display = 'none';
                 }
@@ -4669,6 +6053,8 @@ Este certificado confirma a autenticidade e procedência do produto, refletindo 
                 'products': 'view_products',
                 'sales': 'view_sales',
                 'financial': 'view_financial',
+                'coupons': 'view_sales',
+                'loyalty': 'view_customers',
                 'recurrence': 'view_customers',
                 'profile': 'view_users',
                 'settings': 'view_settings'
@@ -4836,6 +6222,254 @@ Este certificado confirma a autenticidade e procedência do produto, refletindo 
         window.downloadCertificateCompact = downloadCertificateCompact;
         window.viewCertificateCard = viewCertificateCard;
         window.sendCertificateWhatsApp = sendCertificateWhatsApp;
+
+        // Funções de Cupons
+        function loadCoupons() {
+            reloadDataFromStorage();
+            const tbody = document.getElementById('coupons-table-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            if (coupons.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum cupom cadastrado</td></tr>';
+                return;
+            }
+            
+            coupons.forEach(coupon => {
+                const now = new Date();
+                const endDate = new Date(coupon.endDate);
+                const isExpired = endDate < now;
+                const isActive = !isExpired && (!coupon.usageLimit || coupon.usedCount < coupon.usageLimit);
+                
+                const discountText = coupon.type === 'percentage' 
+                    ? `${coupon.value}%` 
+                    : `R$ ${coupon.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong style="color: #D4AF37;">${coupon.code}</strong></td>
+                    <td>${coupon.type === 'percentage' ? 'Percentual' : 'Valor Fixo'}</td>
+                    <td>${discountText}</td>
+                    <td>${new Date(coupon.endDate).toLocaleDateString('pt-BR')}</td>
+                    <td>${coupon.usedCount || 0} / ${coupon.usageLimit || '∞'}</td>
+                    <td><span class="status-badge ${isActive ? 'cliente' : 'perdido'}">${isActive ? 'Ativo' : 'Inativo'}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="deleteCoupon(${coupon.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function deleteCoupon(id) {
+            if (confirm('Deseja realmente excluir este cupom?')) {
+                coupons = coupons.filter(c => c.id !== id);
+                saveData();
+                loadCoupons();
+            }
+        }
+        
+        window.deleteCoupon = deleteCoupon;
+        
+        // Event listener do formulário de cupons
+        document.getElementById('coupon-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const coupon = {
+                id: Date.now(),
+                code: document.getElementById('coupon-code').value.toUpperCase(),
+                type: document.getElementById('coupon-type').value,
+                value: parseFloat(document.getElementById('coupon-value').value),
+                startDate: document.getElementById('coupon-start-date').value || new Date().toISOString().split('T')[0],
+                endDate: document.getElementById('coupon-end-date').value,
+                usageLimit: document.getElementById('coupon-usage-limit').value ? parseInt(document.getElementById('coupon-usage-limit').value) : null,
+                minPurchase: document.getElementById('coupon-min-purchase').value ? parseFloat(document.getElementById('coupon-min-purchase').value) : null,
+                description: document.getElementById('coupon-description').value || '',
+                usedCount: 0
+            };
+            
+            // Verificar se código já existe
+            if (coupons.find(c => c.code === coupon.code)) {
+                alert('Já existe um cupom com este código!');
+                return;
+            }
+            
+            coupons.push(coupon);
+            saveData();
+            closeModal('coupon-modal');
+            loadCoupons();
+        });
+        
+        // Funções de Programa de Fidelidade
+        function loadLoyalty() {
+            reloadDataFromStorage();
+            
+            // Inicializar programa se não existir
+            if (!loyaltyProgram || Object.keys(loyaltyProgram).length === 0) {
+                loyaltyProgram = {
+                    pointsPerReal: 1,
+                    levels: {
+                        bronze: { min: 0, discount: 0 },
+                        silver: { min: 100, discount: 5 },
+                        gold: { min: 500, discount: 10 },
+                        platinum: { min: 1000, discount: 15 }
+                    }
+                };
+                saveData();
+            }
+            
+            // Inicializar pontos dos clientes se não tiverem
+            customers.forEach(customer => {
+                if (!customer.loyaltyPoints) customer.loyaltyPoints = 0;
+                if (!customer.loyaltyLevel) customer.loyaltyLevel = getLoyaltyLevel(customer.loyaltyPoints);
+            });
+            saveData();
+            
+            // Atualizar estatísticas
+            const customersInProgram = customers.filter(c => c.loyaltyPoints > 0).length;
+            const totalPoints = customers.reduce((sum, c) => sum + (c.loyaltyPoints || 0), 0);
+            const vipCount = customers.filter(c => c.loyaltyLevel === 'platinum' || c.loyaltyLevel === 'gold').length;
+            
+            document.getElementById('loyalty-customers-count').textContent = customersInProgram;
+            document.getElementById('loyalty-total-points').textContent = totalPoints.toLocaleString('pt-BR');
+            document.getElementById('loyalty-vip-count').textContent = vipCount;
+            
+            // Carregar ranking
+            const tbody = document.getElementById('loyalty-ranking-body');
+            if (!tbody) return;
+            
+            const sortedCustomers = [...customers]
+                .filter(c => c.loyaltyPoints > 0)
+                .sort((a, b) => (b.loyaltyPoints || 0) - (a.loyaltyPoints || 0))
+                .slice(0, 50);
+            
+            tbody.innerHTML = '';
+            if (sortedCustomers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Nenhum cliente com pontos ainda</td></tr>';
+                return;
+            }
+            
+            sortedCustomers.forEach(customer => {
+                const level = customer.loyaltyLevel || getLoyaltyLevel(customer.loyaltyPoints || 0);
+                const levelEmoji = {
+                    bronze: '🥉',
+                    silver: '🥈',
+                    gold: '🥇',
+                    platinum: '💎'
+                };
+                const levelName = {
+                    bronze: 'Bronze',
+                    silver: 'Prata',
+                    gold: 'Ouro',
+                    platinum: 'Platina'
+                };
+                
+                const lastSale = sales
+                    .filter(s => s.customerId === customer.id)
+                    .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${customer.name}</td>
+                    <td><strong style="color: #D4AF37;">${(customer.loyaltyPoints || 0).toLocaleString('pt-BR')}</strong></td>
+                    <td>${levelEmoji[level]} ${levelName[level]}</td>
+                    <td>${lastSale ? new Date(lastSale.date).toLocaleDateString('pt-BR') : '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="viewCustomerLoyalty(${customer.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function getLoyaltyLevel(points) {
+            if (!loyaltyProgram || !loyaltyProgram.levels) return 'bronze';
+            const levels = loyaltyProgram.levels;
+            if (points >= (levels.platinum?.min || 1000)) return 'platinum';
+            if (points >= (levels.gold?.min || 500)) return 'gold';
+            if (points >= (levels.silver?.min || 100)) return 'silver';
+            return 'bronze';
+        }
+        
+        function loadLoyaltyConfig() {
+            if (!loyaltyProgram || Object.keys(loyaltyProgram).length === 0) {
+                loyaltyProgram = {
+                    pointsPerReal: 1,
+                    levels: {
+                        bronze: { min: 0, discount: 0 },
+                        silver: { min: 100, discount: 5 },
+                        gold: { min: 500, discount: 10 },
+                        platinum: { min: 1000, discount: 15 }
+                    }
+                };
+            }
+            
+            document.getElementById('loyalty-points-per-real').value = loyaltyProgram.pointsPerReal || 1;
+            document.getElementById('loyalty-bronze-min').value = loyaltyProgram.levels?.bronze?.min || 0;
+            document.getElementById('loyalty-silver-min').value = loyaltyProgram.levels?.silver?.min || 100;
+            document.getElementById('loyalty-gold-min').value = loyaltyProgram.levels?.gold?.min || 500;
+            document.getElementById('loyalty-platinum-min').value = loyaltyProgram.levels?.platinum?.min || 1000;
+            document.getElementById('loyalty-bronze-discount').value = loyaltyProgram.levels?.bronze?.discount || 0;
+            document.getElementById('loyalty-silver-discount').value = loyaltyProgram.levels?.silver?.discount || 5;
+            document.getElementById('loyalty-gold-discount').value = loyaltyProgram.levels?.gold?.discount || 10;
+            document.getElementById('loyalty-platinum-discount').value = loyaltyProgram.levels?.platinum?.discount || 15;
+        }
+        
+        function viewCustomerLoyalty(customerId) {
+            const customer = customers.find(c => c.id === customerId);
+            if (!customer) return;
+            
+            const level = customer.loyaltyLevel || getLoyaltyLevel(customer.loyaltyPoints || 0);
+            const levelName = {
+                bronze: 'Bronze',
+                silver: 'Prata',
+                gold: 'Ouro',
+                platinum: 'Platina'
+            };
+            
+            alert(`Cliente: ${customer.name}\nPontos: ${customer.loyaltyPoints || 0}\nNível: ${levelName[level]}\nDesconto: ${loyaltyProgram.levels?.[level]?.discount || 0}%`);
+        }
+        
+        window.viewCustomerLoyalty = viewCustomerLoyalty;
+        
+        // Event listener do formulário de fidelidade
+        document.getElementById('loyalty-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            loyaltyProgram = {
+                pointsPerReal: parseFloat(document.getElementById('loyalty-points-per-real').value) || 1,
+                levels: {
+                    bronze: {
+                        min: parseInt(document.getElementById('loyalty-bronze-min').value) || 0,
+                        discount: parseFloat(document.getElementById('loyalty-bronze-discount').value) || 0
+                    },
+                    silver: {
+                        min: parseInt(document.getElementById('loyalty-silver-min').value) || 100,
+                        discount: parseFloat(document.getElementById('loyalty-silver-discount').value) || 5
+                    },
+                    gold: {
+                        min: parseInt(document.getElementById('loyalty-gold-min').value) || 500,
+                        discount: parseFloat(document.getElementById('loyalty-gold-discount').value) || 10
+                    },
+                    platinum: {
+                        min: parseInt(document.getElementById('loyalty-platinum-min').value) || 1000,
+                        discount: parseFloat(document.getElementById('loyalty-platinum-discount').value) || 15
+                    }
+                }
+            };
+            
+            // Atualizar níveis dos clientes
+            customers.forEach(customer => {
+                customer.loyaltyLevel = getLoyaltyLevel(customer.loyaltyPoints || 0);
+            });
+            
+            saveData();
+            closeModal('loyalty-modal');
+            loadLoyalty();
+            alert('Programa de fidelidade configurado com sucesso!');
+        });
     </script>
 </body>
 </html>
