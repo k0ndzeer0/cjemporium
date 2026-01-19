@@ -417,6 +417,9 @@
             letter-spacing: 0.01em;
             position: relative;
             overflow: hidden;
+            z-index: 10;
+            pointer-events: auto;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn-primary {
@@ -500,11 +503,13 @@
             z-index: 999;
             opacity: 0;
             transition: opacity 0.3s ease;
+            pointer-events: none;
         }
 
         .sidebar-overlay.active {
             display: block;
             opacity: 1;
+            pointer-events: auto;
         }
 
         .mobile-menu-toggle {
@@ -612,6 +617,8 @@
             flex: 1;
             padding: 2rem;
             overflow-y: auto;
+            position: relative;
+            z-index: 1;
         }
 
         .page {
@@ -4099,6 +4106,52 @@
                     }, 100);
                 });
             }
+            
+            // Garantir que todos os botões sejam clicáveis
+            // Corrigir problema de overlay bloqueando cliques
+            document.addEventListener('DOMContentLoaded', function() {
+                // Garantir que o overlay só bloqueie quando ativo
+                const sidebarOverlay = document.getElementById('sidebar-overlay');
+                if (sidebarOverlay && !sidebarOverlay.classList.contains('active')) {
+                    sidebarOverlay.style.pointerEvents = 'none';
+                    sidebarOverlay.style.display = 'none';
+                }
+                
+                // Garantir que todos os botões tenham pointer-events: auto
+                const allButtons = document.querySelectorAll('button, .btn, [onclick]');
+                allButtons.forEach(btn => {
+                    btn.style.pointerEvents = 'auto';
+                    btn.style.cursor = 'pointer';
+                    btn.style.zIndex = '10';
+                });
+                
+                // Observar mudanças no DOM para aplicar correções em botões dinâmicos
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        mutation.addedNodes.forEach(function(node) {
+                            if (node.nodeType === 1) { // Element node
+                                const buttons = node.querySelectorAll ? node.querySelectorAll('button, .btn, [onclick]') : [];
+                                buttons.forEach(btn => {
+                                    btn.style.pointerEvents = 'auto';
+                                    btn.style.cursor = 'pointer';
+                                    btn.style.zIndex = '10';
+                                });
+                                if (node.tagName === 'BUTTON' || node.classList.contains('btn') || node.hasAttribute('onclick')) {
+                                    node.style.pointerEvents = 'auto';
+                                    node.style.cursor = 'pointer';
+                                    node.style.zIndex = '10';
+                                }
+                            }
+                        });
+                    });
+                });
+                
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+            });
+            
             document.getElementById('add-sale-btn')?.addEventListener('click', () => {
                 openModal('sale-modal');
                 loadSaleForm();
