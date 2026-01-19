@@ -3863,8 +3863,20 @@
                     });
                 });
                 
+                // Função única para toggle do menu
                 mobileMenuToggle.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    e.preventDefault();
+                    
+                    // Recarregar dados quando o menu mobile é aberto
+                    if (typeof reloadDataFromStorage === 'function') {
+                        reloadDataFromStorage();
+                    }
+                    // Aplicar permissões novamente para garantir que os itens apareçam
+                    if (typeof applyPermissions === 'function') {
+                        applyPermissions();
+                    }
+                    
                     toggleSidebar();
                 });
                 
@@ -3880,35 +3892,6 @@
                             document.body.classList.remove('menu-open');
                         }
                     }, 100);
-                });
-                
-                // Código antigo mantido para compatibilidade
-                mobileMenuToggle.addEventListener('click', () => {
-                    // Recarregar dados quando o menu mobile é aberto
-                    reloadDataFromStorage();
-                    // Aplicar permissões novamente para garantir que os itens apareçam
-                    applyPermissions();
-                    
-                    sidebar.classList.toggle('active');
-                    sidebarOverlay.classList.toggle('active');
-                    mobileMenuToggle.classList.toggle('active');
-                });
-                
-                sidebarOverlay.addEventListener('click', () => {
-                    sidebar.classList.remove('active');
-                    sidebarOverlay.classList.remove('active');
-                    mobileMenuToggle.classList.remove('active');
-                });
-                
-                // Fechar menu ao clicar em um item (mobile)
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.addEventListener('click', () => {
-                        if (window.innerWidth <= 768) {
-                            sidebar.classList.remove('active');
-                            sidebarOverlay.classList.remove('active');
-                            mobileMenuToggle.classList.remove('active');
-                        }
-                    });
                 });
             }
             document.getElementById('add-sale-btn')?.addEventListener('click', () => {
