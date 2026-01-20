@@ -3371,6 +3371,9 @@
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-secondary" data-modal="sale-details-modal">Fechar</button>
+                <button type="button" class="btn btn-success" id="btn-mark-paid-from-details" style="display: none; background: #10b981; color: white;">
+                    <i class="fas fa-check"></i> Marcar como Pago
+                </button>
                 <button type="button" class="btn btn-primary" id="btn-generate-invoice-from-details" style="display: none;">
                     <i class="fas fa-file-invoice"></i> Gerar Cobrança
                 </button>
@@ -3401,10 +3404,16 @@
                 <div class="form-group">
                     <label>Formato</label>
                     <select id="invoice-format">
+                        <option value="whatsapp">WhatsApp</option>
+                        <option value="copy">Copiar Mensagem</option>
                         <option value="pdf">PDF</option>
                         <option value="print">Imprimir</option>
                         <option value="email">Enviar por E-mail</option>
                     </select>
+                </div>
+                <div id="invoice-message-preview" style="margin-top: 1rem; padding: 1rem; background: rgba(212, 175, 55, 0.1); border-radius: 8px; display: none;">
+                    <h4 style="margin-bottom: 0.75rem; color: #D4AF37;">Preview da Mensagem:</h4>
+                    <div id="invoice-message-content" style="white-space: pre-wrap; color: rgba(245, 243, 239, 0.9); line-height: 1.6;"></div>
                 </div>
                 <div id="invoice-preview" style="margin-top: 1rem; padding: 1rem; background: rgba(212, 175, 55, 0.1); border-radius: 8px; display: none;">
                     <!-- Preview da cobrança -->
@@ -5860,6 +5869,11 @@
                     <td>${statusBadge}</td>
                     <td>
                         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            ${sale.payment_status !== 'paid' ? `
+                                <button class="btn btn-sm btn-success" onclick="markPaymentAsPaid(${sale.id})" title="Marcar como Pago" style="background: #10b981; color: white;">
+                                    <i class="fas fa-check"></i> Pago
+                                </button>
+                            ` : ''}
                             <button class="btn btn-sm btn-primary" onclick="generateInvoice(${sale.id})" title="Gerar Cobrança">
                                 <i class="fas fa-file-invoice"></i> Gerar
                             </button>
@@ -5971,6 +5985,11 @@
                         </div>
                     </div>
                     <div class="invoice-card-mobile-actions">
+                        ${sale.payment_status !== 'paid' ? `
+                            <button class="btn btn-success" data-action="paid" data-sale-id="${sale.id}" style="flex: 1; background: #10b981; color: white;">
+                                <i class="fas fa-check"></i> Marcar Pago
+                            </button>
+                        ` : ''}
                         <button class="btn btn-primary" data-action="generate" data-sale-id="${sale.id}" style="flex: 1;">
                             <i class="fas fa-file-invoice"></i> Gerar Cobrança
                         </button>
@@ -5981,8 +6000,25 @@
                 `;
                 
                 // Adicionar event listeners aos botões
+                const paidBtn = card.querySelector('[data-action="paid"]');
                 const generateBtn = card.querySelector('[data-action="generate"]');
                 const viewBtn = card.querySelector('[data-action="view"]');
+                
+                if (paidBtn) {
+                    paidBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const saleId = parseInt(this.getAttribute('data-sale-id'));
+                        if (typeof window.markPaymentAsPaid === 'function') {
+                            window.markPaymentAsPaid(saleId);
+                        } else if (typeof markPaymentAsPaid === 'function') {
+                            markPaymentAsPaid(saleId);
+                        } else {
+                            console.error('markPaymentAsPaid não está definida');
+                            alert('Erro: Função de marcar como pago não encontrada');
+                        }
+                    });
+                }
                 
                 if (generateBtn) {
                     generateBtn.addEventListener('click', function(e) {
@@ -6355,16 +6391,32 @@
                 </div>
             `;
             
-            // Mostrar botão de gerar cobrança se necessário
+            // Mostrar botões de ação se necessário
             const btnGenerate = document.getElementById('btn-generate-invoice-from-details');
+            const btnMarkPaid = document.getElementById('btn-mark-paid-from-details');
+            
             if (sale.payment_installments > 1 || sale.payment_status === 'pending') {
-                btnGenerate.style.display = 'inline-block';
-                btnGenerate.onclick = () => {
-                    closeModal('sale-details-modal');
-                    generateInvoice(saleId);
-                };
+                if (btnGenerate) {
+                    btnGenerate.style.display = 'inline-block';
+                    btnGenerate.onclick = () => {
+                        closeModal('sale-details-modal');
+                        generateInvoice(saleId);
+                    };
+                }
             } else {
-                btnGenerate.style.display = 'none';
+                if (btnGenerate) btnGenerate.style.display = 'none';
+            }
+            
+            if (sale.payment_status !== 'paid') {
+                if (btnMarkPaid) {
+                    btnMarkPaid.style.display = 'inline-block';
+                    btnMarkPaid.onclick = () => {
+                        closeModal('sale-details-modal');
+                        markPaymentAsPaid(saleId);
+                    };
+                }
+            } else {
+                if (btnMarkPaid) btnMarkPaid.style.display = 'none';
             }
             
             openModal('sale-details-modal');
@@ -6417,10 +6469,20 @@
                 preview.style.display = 'none';
             }
             
-            // Mostrar/ocultar campo de parcela customizada
-            document.getElementById('invoice-type').addEventListener('change', function() {
+            // Atualizar preview da mensagem
+            updateInvoiceMessagePreview(sale, installmentsDates, installmentsValues);
+            
+            // Mostrar/ocultar campo de parcela customizada e atualizar preview
+            const invoiceTypeSelect = document.getElementById('invoice-type');
+            invoiceTypeSelect.addEventListener('change', function() {
                 document.getElementById('invoice-custom-parcel').style.display = 
                     this.value === 'custom' ? 'block' : 'none';
+                updateInvoiceMessagePreview(sale, installmentsDates, installmentsValues);
+            });
+            
+            // Atualizar preview quando mudar parcela customizada
+            document.getElementById('invoice-parcel-number')?.addEventListener('input', function() {
+                updateInvoiceMessagePreview(sale, installmentsDates, installmentsValues);
             });
             
             openModal('invoice-modal');
@@ -6429,9 +6491,611 @@
         // Variável global para armazenar ID da venda atual no modal de cobrança
         let currentInvoiceSaleId = null;
         
+        // Função para gerar template de mensagem de cobrança
+        function generateInvoiceMessage(sale, parcelNumber, installmentsDates, installmentsValues) {
+            const customer = customers.find(c => c.id === sale.customer_id || c.id === sale.customerId);
+            const customerName = sale.customer_name || customer?.name || 'Cliente';
+            
+            // Obter dados da parcela
+            let parcelInfo = {
+                number: parcelNumber,
+                total: sale.payment_installments,
+                value: 0,
+                dueDate: ''
+            };
+            
+            if (parcelNumber > 0 && parcelNumber <= sale.payment_installments) {
+                parcelInfo.value = installmentsValues[parcelNumber - 1] || (sale.total_amount / sale.payment_installments);
+                parcelInfo.dueDate = installmentsDates[parcelNumber - 1] ? new Date(installmentsDates[parcelNumber - 1]).toLocaleDateString('pt-BR') : '';
+            } else {
+                parcelInfo.value = sale.total_amount / sale.payment_installments;
+                parcelInfo.dueDate = sale.payment_due_date ? new Date(sale.payment_due_date).toLocaleDateString('pt-BR') : '';
+            }
+            
+            // Obter produtos da venda
+            let saleItems = [];
+            if (sale.items) {
+                try {
+                    saleItems = typeof sale.items === 'string' ? JSON.parse(sale.items) : sale.items;
+                } catch (e) {
+                    console.error('Erro ao parsear itens:', e);
+                }
+            }
+            
+            const productsList = saleItems.length > 0 
+                ? saleItems.map(item => {
+                    const product = products.find(p => p.id === item.productId);
+                    return product?.name || 'Produto';
+                }).join(', ')
+                : 'Perfume adquirido';
+            
+            // Template da mensagem
+            const message = `Olá, tudo bem? 😊
+
+Passando apenas para lembrar que a parcela referente ao seu perfume está disponível para pagamento.
+
+📦 Produto: ${productsList}
+💳 Parcela: ${parcelInfo.number}/${parcelInfo.total}
+💰 Valor: R$ ${parcelInfo.value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+📅 Vencimento: ${parcelInfo.dueDate}
+
+Qualquer dúvida ou se precisar de apoio com o pagamento, é só me avisar.
+Fico à disposição!
+
+Atenciosamente,
+CJ Perfumes`;
+
+            return message;
+        }
+        
+        // Função para atualizar preview da mensagem
+        function updateInvoiceMessagePreview(sale, installmentsDates, installmentsValues) {
+            const invoiceType = document.getElementById('invoice-type')?.value || 'next';
+            const parcelNumberInput = document.getElementById('invoice-parcel-number');
+            let parcelNumber = 1;
+            
+            if (invoiceType === 'next') {
+                // Encontrar próxima parcela não vencida
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const nextParcelIndex = installmentsDates.findIndex(date => {
+                    const dueDate = new Date(date);
+                    dueDate.setHours(0, 0, 0, 0);
+                    return dueDate >= today;
+                });
+                parcelNumber = nextParcelIndex >= 0 ? nextParcelIndex + 1 : 1;
+            } else if (invoiceType === 'custom' && parcelNumberInput) {
+                parcelNumber = parseInt(parcelNumberInput.value) || 1;
+            } else if (invoiceType === 'all') {
+                parcelNumber = 1; // Mostrar primeira parcela como exemplo
+            }
+            
+            const message = generateInvoiceMessage(sale, parcelNumber, installmentsDates, installmentsValues);
+            const messagePreview = document.getElementById('invoice-message-preview');
+            const messageContent = document.getElementById('invoice-message-content');
+            
+            if (messagePreview && messageContent) {
+                messagePreview.style.display = 'block';
+                messageContent.textContent = message;
+            }
+        }
+        
+        // Função para marcar pagamento como pago
+        function markPaymentAsPaid(saleId) {
+            const sale = sales.find(s => s.id === saleId);
+            if (!sale) {
+                alert('Venda não encontrada');
+                return;
+            }
+            
+            // Verificar se já está pago
+            if (sale.payment_status === 'paid') {
+                alert('Esta venda já está marcada como paga.');
+                return;
+            }
+            
+            // Perguntar qual parcela foi paga (se houver parcelas)
+            let parcelNumber = null;
+            if (sale.payment_installments > 1) {
+                const parcelInput = prompt(`Esta venda tem ${sale.payment_installments} parcelas.\n\nQual parcela foi paga? (Digite o número da parcela ou "todas" para marcar todas como pagas):`);
+                
+                if (parcelInput === null) return; // Usuário cancelou
+                
+                if (parcelInput.toLowerCase() === 'todas' || parcelInput.toLowerCase() === 'all') {
+                    parcelNumber = 'all';
+                } else {
+                    parcelNumber = parseInt(parcelInput);
+                    if (isNaN(parcelNumber) || parcelNumber < 1 || parcelNumber > sale.payment_installments) {
+                        alert('Número de parcela inválido.');
+                        return;
+                    }
+                }
+            }
+            
+            // Confirmar
+            const confirmMessage = parcelNumber === 'all' 
+                ? `Confirmar pagamento de TODAS as ${sale.payment_installments} parcelas?`
+                : parcelNumber 
+                    ? `Confirmar pagamento da parcela ${parcelNumber} de ${sale.payment_installments}?`
+                    : 'Confirmar pagamento desta venda?';
+            
+            if (!confirm(confirmMessage)) return;
+            
+            // Atualizar status no banco de dados
+            const updateData = {
+                payment_status: parcelNumber === 'all' ? 'paid' : 'partial'
+            };
+            
+            // Se todas as parcelas foram pagas, marcar como pago completamente
+            if (parcelNumber === 'all') {
+                updateData.payment_status = 'paid';
+            }
+            
+            // Atualizar no Supabase
+            if (useSupabase && sale.id) {
+                supabaseRequest('sales', 'PATCH', updateData, `?id=eq.${sale.id}`)
+                    .then(() => {
+                        // Gerar comprovante em PDF
+                        generatePaymentReceiptPDF(sale, parcelNumber);
+                        
+                        alert('Pagamento registrado com sucesso! O comprovante será baixado automaticamente.');
+                        
+                        // Recarregar dados
+                        if (useSupabase) {
+                            loadDataFromSupabase();
+                        } else {
+                            loadSales();
+                            loadInvoices();
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Erro ao atualizar pagamento:', err);
+                        alert('Erro ao registrar pagamento. Tente novamente.');
+                    });
+            } else {
+                // Atualizar localmente
+                const saleIndex = sales.findIndex(s => s.id === saleId);
+                if (saleIndex >= 0) {
+                    sales[saleIndex].payment_status = updateData.payment_status;
+                    saveData();
+                    
+                    // Gerar comprovante em PDF
+                    generatePaymentReceiptPDF(sale, parcelNumber);
+                    
+                    alert('Pagamento registrado com sucesso! O comprovante será baixado automaticamente.');
+                    loadSales();
+                    loadInvoices();
+                }
+            }
+        }
+        
+        // Função para gerar comprovante de pagamento em PDF
+        function generatePaymentReceiptPDF(sale, parcelNumber) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+            
+            const customer = customers.find(c => c.id === sale.customer_id || c.id === sale.customerId);
+            const customerName = sale.customer_name || customer?.name || 'Cliente';
+            
+            // Parsear parcelas
+            let installmentsDates = [];
+            let installmentsValues = [];
+            if (sale.payment_installments_dates) {
+                try {
+                    installmentsDates = typeof sale.payment_installments_dates === 'string' 
+                        ? JSON.parse(sale.payment_installments_dates) 
+                        : sale.payment_installments_dates;
+                } catch (e) {
+                    console.error('Erro ao parsear datas:', e);
+                }
+            }
+            if (sale.payment_installments_values) {
+                try {
+                    installmentsValues = typeof sale.payment_installments_values === 'string' 
+                        ? JSON.parse(sale.payment_installments_values) 
+                        : sale.payment_installments_values;
+                } catch (e) {
+                    console.error('Erro ao parsear valores:', e);
+                }
+            }
+            
+            // Fundo branco
+            doc.setFillColor(255, 255, 255);
+            doc.rect(0, 0, 210, 297, 'F');
+            
+            // Borda dourada superior
+            doc.setDrawColor(212, 175, 55);
+            doc.setLineWidth(2);
+            doc.line(0, 0, 210, 0);
+            
+            // Logo/Título
+            doc.setFontSize(24);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(212, 175, 55);
+            doc.text('CJ PERFUMES', 105, 25, { align: 'center' });
+            
+            // Subtítulo
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(43, 43, 43);
+            doc.text('COMPROVANTE DE PAGAMENTO', 105, 35, { align: 'center' });
+            
+            // Linha decorativa
+            doc.setDrawColor(212, 175, 55);
+            doc.setLineWidth(0.5);
+            doc.line(30, 42, 180, 42);
+            
+            let yPos = 55;
+            
+            // Informações da venda
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(43, 43, 43);
+            doc.text('INFORMAÇÕES DA VENDA', 30, yPos);
+            
+            yPos += 10;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.text(`Número da Venda: ${sale.sale_number || sale.number || '-'}`, 30, yPos);
+            yPos += 7;
+            doc.text(`Data: ${sale.created_at ? new Date(sale.created_at).toLocaleDateString('pt-BR') : (sale.date || '-')}`, 30, yPos);
+            
+            // Informações do cliente
+            yPos += 12;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.text('DADOS DO CLIENTE', 30, yPos);
+            
+            yPos += 10;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.text(`Nome: ${customerName}`, 30, yPos);
+            yPos += 7;
+            if (customer?.email) {
+                doc.text(`E-mail: ${customer.email}`, 30, yPos);
+                yPos += 7;
+            }
+            if (customer?.phone || sale.customer_phone) {
+                doc.text(`Telefone: ${customer?.phone || sale.customer_phone}`, 30, yPos);
+                yPos += 7;
+            }
+            
+            // Informações do pagamento
+            yPos += 8;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.setTextColor(212, 175, 55);
+            doc.text('DADOS DO PAGAMENTO', 30, yPos);
+            
+            yPos += 10;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(43, 43, 43);
+            
+            const paymentType = sale.payment_type || sale.payment_method || '-';
+            const paymentNames = {
+                'dinheiro': 'Dinheiro',
+                'cash': 'Dinheiro',
+                'pix': 'PIX',
+                'cartao': 'Cartão de Crédito',
+                'credit_card': 'Cartão de Crédito',
+                'debit_card': 'Cartão de Débito',
+                'fonte': 'Fonte',
+                'promissoria': 'Promissória'
+            };
+            const paymentName = paymentNames[paymentType] || paymentType;
+            
+            doc.text(`Forma de Pagamento: ${paymentName}`, 30, yPos);
+            yPos += 7;
+            
+            if (parcelNumber === 'all') {
+                doc.text(`Status: TODAS AS PARCELAS PAGAS`, 30, yPos);
+                yPos += 7;
+                doc.text(`Total de Parcelas: ${sale.payment_installments}`, 30, yPos);
+                yPos += 7;
+                doc.text(`Valor Total: R$ ${(sale.total || sale.total_amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 30, yPos);
+            } else if (parcelNumber) {
+                const parcelValue = installmentsValues[parcelNumber - 1] || (sale.total_amount / sale.payment_installments);
+                const parcelDate = installmentsDates[parcelNumber - 1] ? new Date(installmentsDates[parcelNumber - 1]).toLocaleDateString('pt-BR') : '-';
+                doc.text(`Parcela Paga: ${parcelNumber} de ${sale.payment_installments}`, 30, yPos);
+                yPos += 7;
+                doc.text(`Valor da Parcela: R$ ${parcelValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 30, yPos);
+                yPos += 7;
+                doc.text(`Data de Vencimento: ${parcelDate}`, 30, yPos);
+            } else {
+                doc.text(`Valor Total: R$ ${(sale.total || sale.total_amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 30, yPos);
+            }
+            
+            yPos += 7;
+            doc.text(`Data do Pagamento: ${new Date().toLocaleDateString('pt-BR')}`, 30, yPos);
+            
+            // Itens da venda
+            yPos += 15;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.setTextColor(43, 43, 43);
+            doc.text('ITENS DA VENDA', 30, yPos);
+            
+            yPos += 8;
+            let saleItems = [];
+            if (sale.items) {
+                try {
+                    saleItems = typeof sale.items === 'string' ? JSON.parse(sale.items) : sale.items;
+                } catch (e) {
+                    console.error('Erro ao parsear itens:', e);
+                }
+            }
+            
+            if (saleItems.length > 0) {
+                saleItems.forEach((item, index) => {
+                    if (yPos > 250) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    const product = products.find(p => p.id === item.productId);
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(9);
+                    doc.text(`${product?.name || 'Produto'} - Qtd: ${item.quantity} - R$ ${(item.totalPrice || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 30, yPos);
+                    yPos += 6;
+                });
+            } else {
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9);
+                doc.text('Nenhum item encontrado', 30, yPos);
+                yPos += 6;
+            }
+            
+            // Total
+            yPos += 5;
+            doc.setDrawColor(212, 175, 55);
+            doc.setLineWidth(0.5);
+            doc.line(30, yPos, 180, yPos);
+            
+            yPos += 8;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.setTextColor(212, 175, 55);
+            doc.text(`TOTAL: R$ ${(sale.total || sale.total_amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 30, yPos);
+            
+            // Rodapé
+            yPos = 270;
+            doc.setDrawColor(212, 175, 55);
+            doc.setLineWidth(0.5);
+            doc.line(30, yPos, 180, yPos);
+            
+            yPos += 10;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Este é um comprovante de pagamento gerado automaticamente.', 105, yPos, { align: 'center' });
+            yPos += 6;
+            doc.text('CJ Perfumes - Haute Parfumarie', 105, yPos, { align: 'center' });
+            yPos += 6;
+            doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 105, yPos, { align: 'center' });
+            
+            // Salvar PDF
+            const fileName = parcelNumber === 'all' 
+                ? `Comprovante_Pagamento_${sale.sale_number || sale.number}_Todas_Parcelas.pdf`
+                : parcelNumber 
+                    ? `Comprovante_Pagamento_${sale.sale_number || sale.number}_Parcela_${parcelNumber}.pdf`
+                    : `Comprovante_Pagamento_${sale.sale_number || sale.number}.pdf`;
+            
+            doc.save(fileName);
+        }
+        
+        // Função para gerar PDF de cobrança
+        function generateInvoicePDF(sale, parcelNumber, installmentsDates, installmentsValues, forPrint = false) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+            
+            const customer = customers.find(c => c.id === sale.customer_id || c.id === sale.customerId);
+            const customerName = sale.customer_name || customer?.name || 'Cliente';
+            const customerPhone = sale.customer_phone || customer?.phone || '';
+            const customerEmail = sale.customer_email || customer?.email || '';
+            
+            // Obter dados da parcela
+            let parcelInfo = {
+                number: parcelNumber,
+                total: sale.payment_installments,
+                value: 0,
+                dueDate: ''
+            };
+            
+            if (parcelNumber > 0 && parcelNumber <= sale.payment_installments) {
+                parcelInfo.value = installmentsValues[parcelNumber - 1] || (sale.total_amount / sale.payment_installments);
+                parcelInfo.dueDate = installmentsDates[parcelNumber - 1] ? new Date(installmentsDates[parcelNumber - 1]).toLocaleDateString('pt-BR') : '';
+            } else {
+                parcelInfo.value = sale.total_amount / sale.payment_installments;
+                parcelInfo.dueDate = sale.payment_due_date ? new Date(sale.payment_due_date).toLocaleDateString('pt-BR') : '';
+            }
+            
+            // Obter produtos da venda
+            let saleItems = [];
+            if (sale.items) {
+                try {
+                    saleItems = typeof sale.items === 'string' ? JSON.parse(sale.items) : sale.items;
+                } catch (e) {
+                    console.error('Erro ao parsear itens:', e);
+                }
+            }
+            
+            const productsList = saleItems.length > 0 
+                ? saleItems.map(item => {
+                    const product = products.find(p => p.id === item.productId);
+                    return product?.name || 'Produto';
+                }).join(', ')
+                : 'Perfume adquirido';
+            
+            // Fundo branco
+            doc.setFillColor(255, 255, 255);
+            doc.rect(0, 0, 210, 297, 'F');
+            
+            // Borda dourada superior
+            doc.setDrawColor(212, 175, 55);
+            doc.setLineWidth(2);
+            doc.line(0, 0, 210, 0);
+            
+            // Logo/Título
+            doc.setFontSize(24);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(212, 175, 55);
+            doc.text('CJ PERFUMES', 105, 25, { align: 'center' });
+            
+            // Subtítulo
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(43, 43, 43);
+            doc.text('COBRANÇA', 105, 35, { align: 'center' });
+            
+            // Linha decorativa
+            doc.setDrawColor(212, 175, 55);
+            doc.setLineWidth(0.5);
+            doc.line(30, 42, 180, 42);
+            
+            let yPos = 55;
+            
+            // Informações da cobrança
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(212, 175, 55);
+            doc.text('DADOS DA COBRANÇA', 30, yPos);
+            
+            yPos += 12;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(11);
+            doc.setTextColor(43, 43, 43);
+            doc.text(`Número da Venda: ${sale.sale_number || sale.number || '-'}`, 30, yPos);
+            yPos += 8;
+            doc.text(`Produto: ${productsList}`, 30, yPos);
+            yPos += 8;
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(212, 175, 55);
+            doc.text(`Parcela: ${parcelInfo.number}/${parcelInfo.total}`, 30, yPos);
+            yPos += 8;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.setTextColor(43, 43, 43);
+            doc.text(`Valor: R$ ${parcelInfo.value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 30, yPos);
+            yPos += 10;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.setTextColor(212, 175, 55);
+            doc.text(`Vencimento: ${parcelInfo.dueDate}`, 30, yPos);
+            
+            // Informações do cliente
+            yPos += 15;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.setTextColor(43, 43, 43);
+            doc.text('DADOS DO CLIENTE', 30, yPos);
+            
+            yPos += 10;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.text(`Nome: ${customerName}`, 30, yPos);
+            yPos += 7;
+            if (customerEmail) {
+                doc.text(`E-mail: ${customerEmail}`, 30, yPos);
+                yPos += 7;
+            }
+            if (customerPhone) {
+                doc.text(`Telefone: ${customerPhone}`, 30, yPos);
+                yPos += 7;
+            }
+            
+            // Forma de pagamento
+            yPos += 8;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.setTextColor(43, 43, 43);
+            doc.text('FORMA DE PAGAMENTO', 30, yPos);
+            
+            yPos += 10;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            const paymentType = sale.payment_type || sale.payment_method || '-';
+            const paymentNames = {
+                'dinheiro': 'Dinheiro',
+                'cash': 'Dinheiro',
+                'pix': 'PIX',
+                'cartao': 'Cartão de Crédito',
+                'credit_card': 'Cartão de Crédito',
+                'debit_card': 'Cartão de Débito',
+                'fonte': 'Fonte',
+                'promissoria': 'Promissória'
+            };
+            const paymentName = paymentNames[paymentType] || paymentType;
+            doc.text(`Forma: ${paymentName}`, 30, yPos);
+            
+            // Mensagem de lembrete
+            yPos += 15;
+            doc.setDrawColor(212, 175, 55);
+            doc.setLineWidth(0.5);
+            doc.line(30, yPos, 180, yPos);
+            
+            yPos += 10;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(43, 43, 43);
+            const reminderText = [
+                'Olá, tudo bem?',
+                '',
+                'Passando apenas para lembrar que a parcela referente ao seu perfume',
+                'está disponível para pagamento.',
+                '',
+                'Qualquer dúvida ou se precisar de apoio com o pagamento,',
+                'é só nos avisar. Ficamos à disposição!'
+            ];
+            reminderText.forEach(line => {
+                doc.text(line, 30, yPos);
+                yPos += 6;
+            });
+            
+            // Rodapé
+            yPos = 270;
+            doc.setDrawColor(212, 175, 55);
+            doc.setLineWidth(0.5);
+            doc.line(30, yPos, 180, yPos);
+            
+            yPos += 10;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Atenciosamente,', 30, yPos);
+            yPos += 7;
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(212, 175, 55);
+            doc.text('CJ Perfumes', 30, yPos);
+            yPos += 6;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Haute Parfumarie', 30, yPos);
+            yPos += 8;
+            doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 105, yPos, { align: 'center' });
+            
+            // Salvar ou imprimir
+            if (forPrint) {
+                doc.autoPrint();
+                doc.output('dataurlnewwindow');
+            } else {
+                const fileName = `Cobranca_${sale.sale_number || sale.number}_Parcela_${parcelNumber}.pdf`;
+                doc.save(fileName);
+            }
+        }
+        
         // Expor funções globalmente para uso em onclick e event listeners
         window.generateInvoice = generateInvoice;
         window.viewSaleDetails = viewSaleDetails;
+        window.markPaymentAsPaid = markPaymentAsPaid;
         
         // Função para confirmar geração de cobrança
         function confirmGenerateInvoice() {
@@ -6472,33 +7136,108 @@
                 }
             }
             
-            // Gerar cobrança (por enquanto apenas simulação)
-            let message = `Cobrança gerada para venda ${sale.sale_number || sale.number}!\n\n`;
+            // Determinar qual parcela processar
+            let parcelsToProcess = [];
             
             if (invoiceType === 'all' && sale.payment_installments > 1) {
-                message += `Todas as ${sale.payment_installments} parcelas serão geradas.`;
+                // Todas as parcelas
+                for (let i = 1; i <= sale.payment_installments; i++) {
+                    parcelsToProcess.push(i);
+                }
             } else if (invoiceType === 'next') {
-                const nextParcel = installmentsDates.findIndex(date => new Date(date) > new Date());
-                if (nextParcel >= 0) {
-                    message += `Parcela ${nextParcel + 1} de ${sale.payment_installments} será gerada.`;
+                // Próxima parcela não vencida
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const nextParcelIndex = installmentsDates.findIndex(date => {
+                    const dueDate = new Date(date);
+                    dueDate.setHours(0, 0, 0, 0);
+                    return dueDate >= today;
+                });
+                if (nextParcelIndex >= 0) {
+                    parcelsToProcess.push(nextParcelIndex + 1);
                 } else {
-                    message += 'Todas as parcelas já venceram.';
+                    alert('Todas as parcelas já venceram.');
+                    return;
                 }
             } else if (invoiceType === 'custom') {
                 if (parcelNumber > 0 && parcelNumber <= sale.payment_installments) {
-                    message += `Parcela ${parcelNumber} de ${sale.payment_installments} será gerada.`;
+                    parcelsToProcess.push(parcelNumber);
                 } else {
                     alert('Número de parcela inválido');
                     return;
                 }
             } else {
-                message += 'Cobrança única será gerada.';
+                parcelsToProcess.push(1);
             }
             
-            message += `\n\nFormato: ${invoiceFormat === 'pdf' ? 'PDF' : invoiceFormat === 'print' ? 'Impressão' : 'E-mail'}`;
+            // Processar cada parcela
+            const customer = customers.find(c => c.id === sale.customer_id || c.id === sale.customerId);
+            const customerPhone = sale.customer_phone || customer?.phone || '';
             
-            // TODO: Implementar geração real de PDF/cobrança
-            // Por enquanto apenas marcar como gerado
+            if (invoiceFormat === 'whatsapp' || invoiceFormat === 'copy') {
+                // Gerar mensagem para WhatsApp ou copiar
+                const messages = parcelsToProcess.map(parcelNum => {
+                    return generateInvoiceMessage(sale, parcelNum, installmentsDates, installmentsValues);
+                });
+                
+                if (invoiceFormat === 'whatsapp') {
+                    // Abrir WhatsApp
+                    const phoneNumber = customerPhone.replace(/\D/g, ''); // Remove caracteres não numéricos
+                    if (phoneNumber) {
+                        const whatsappMessage = encodeURIComponent(messages[0]);
+                        window.open(`https://wa.me/${phoneNumber}?text=${whatsappMessage}`, '_blank');
+                        alert(`Mensagem de cobrança gerada! WhatsApp aberto para ${customerPhone}`);
+                    } else {
+                        // Se não tiver telefone, copiar mensagem
+                        navigator.clipboard.writeText(messages[0]).then(() => {
+                            alert('Mensagem copiada para a área de transferência! Cole no WhatsApp manualmente.');
+                        }).catch(() => {
+                            // Fallback para navegadores antigos
+                            const textArea = document.createElement('textarea');
+                            textArea.value = messages[0];
+                            document.body.appendChild(textArea);
+                            textArea.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(textArea);
+                            alert('Mensagem copiada para a área de transferência! Cole no WhatsApp manualmente.');
+                        });
+                    }
+                } else if (invoiceFormat === 'copy') {
+                    // Copiar mensagem
+                    const messageToCopy = messages.join('\n\n---\n\n');
+                    navigator.clipboard.writeText(messageToCopy).then(() => {
+                        alert('Mensagem copiada para a área de transferência!');
+                    }).catch(() => {
+                        // Fallback para navegadores antigos
+                        const textArea = document.createElement('textarea');
+                        textArea.value = messageToCopy;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        alert('Mensagem copiada para a área de transferência!');
+                    });
+                }
+            } else if (invoiceFormat === 'pdf') {
+                // Gerar PDF de cobrança
+                parcelsToProcess.forEach(parcelNum => {
+                    generateInvoicePDF(sale, parcelNum, installmentsDates, installmentsValues);
+                });
+                alert('PDF(s) de cobrança gerado(s) com sucesso!');
+            } else if (invoiceFormat === 'print') {
+                // Imprimir (gerar PDF e abrir diálogo de impressão)
+                parcelsToProcess.forEach(parcelNum => {
+                    generateInvoicePDF(sale, parcelNum, installmentsDates, installmentsValues, true);
+                });
+            } else {
+                // Email (futuro)
+                let message = `Cobrança gerada para venda ${sale.sale_number || sale.number}!\n\n`;
+                message += `Parcelas processadas: ${parcelsToProcess.join(', ')}\n`;
+                message += `Formato: E-mail (funcionalidade em desenvolvimento)`;
+                alert(message);
+            }
+            
+            // Marcar como gerado
             if (useSupabase && sale.id) {
                 supabaseRequest('sales', 'PATCH', {
                     payment_receipt_generated: true,
@@ -6510,7 +7249,6 @@
                 });
             }
             
-            alert(message);
             closeModal('invoice-modal');
             
             // Recarregar vendas para atualizar status
