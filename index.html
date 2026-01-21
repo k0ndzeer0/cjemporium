@@ -2282,6 +2282,9 @@
                 <a class="nav-item" data-page="products" data-permission="view_products">
                     <i class="fas fa-box"></i> <span>Produtos</span>
                 </a>
+                <a class="nav-item" data-page="highlights" data-permission="view_products">
+                    <i class="fas fa-fire"></i> <span>Destaques e Promoções</span>
+                </a>
                 <a class="nav-item" data-page="sales" data-permission="view_sales">
                     <i class="fas fa-shopping-cart"></i> <span>Vendas</span>
                 </a>
@@ -2449,6 +2452,126 @@
                     </button>
                 </div>
                 <div class="products-grid" id="products-grid"></div>
+            </div>
+
+            <!-- Highlights and Promotions -->
+            <div id="highlights-page" class="page">
+                <div class="page-header">
+                    <h1><i class="fas fa-fire"></i> Destaques e Promoções</h1>
+                    <button class="btn btn-danger" onclick="clearAllHighlights()" id="clear-all-highlights-btn">
+                        <i class="fas fa-trash"></i> Limpar Todos os Destaques
+                    </button>
+                </div>
+
+                <!-- Estatísticas -->
+                <div class="stats-grid" style="margin-bottom: 2rem;">
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-red">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div>
+                            <p class="stat-label">Produtos em Destaque</p>
+                            <p class="stat-value" id="highlight-total-count">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-green">
+                            <i class="fas fa-percent"></i>
+                        </div>
+                        <div>
+                            <p class="stat-label">Produtos com Desconto</p>
+                            <p class="stat-value" id="discount-total-count">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-purple">
+                            <i class="fas fa-sparkles"></i>
+                        </div>
+                        <div>
+                            <p class="stat-label">Produtos Novidade</p>
+                            <p class="stat-value" id="novelty-total-count">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produtos com Desconto -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 style="color: #D4AF37; margin: 0;">
+                            <i class="fas fa-percent"></i> Produtos com Desconto
+                        </h2>
+                        <button class="btn btn-primary btn-sm" onclick="openAddHighlightModal('discount')">
+                            <i class="fas fa-plus"></i> Adicionar Desconto
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Marca</th>
+                                    <th>Preço Original</th>
+                                    <th>Desconto</th>
+                                    <th>Preço com Desconto</th>
+                                    <th>Estoque</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="discount-products-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Produtos Novidade -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 style="color: #D4AF37; margin: 0;">
+                            <i class="fas fa-sparkles"></i> Produtos Novidade
+                        </h2>
+                        <button class="btn btn-primary btn-sm" onclick="openAddHighlightModal('novelty')">
+                            <i class="fas fa-plus"></i> Adicionar Novidade
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Marca</th>
+                                    <th>Preço</th>
+                                    <th>Estoque</th>
+                                    <th>Data de Cadastro</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="novelty-products-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Todos os Produtos em Destaque -->
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 style="color: #D4AF37; margin: 0;">
+                            <i class="fas fa-list"></i> Todos os Produtos em Destaque
+                        </h2>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Tipo</th>
+                                    <th>Desconto</th>
+                                    <th>Preço</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="all-highlights-body"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- Sales -->
@@ -3573,6 +3696,44 @@
         </div>
     </div>
 
+    <!-- Highlight Modal -->
+    <div id="highlight-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="highlight-modal-title">Adicionar Destaque</h2>
+                <button class="modal-close" data-modal="highlight-modal" style="color: rgba(245, 243, 239, 0.6);">&times;</button>
+            </div>
+            <form id="highlight-form">
+                <div class="form-group">
+                    <label>Produto *</label>
+                    <select id="highlight-product-select" required>
+                        <option value="">Selecione um produto</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Destaque *</label>
+                    <select id="highlight-type-select" required>
+                        <option value="">Selecione</option>
+                        <option value="discount">Desconto</option>
+                        <option value="novelty">Novidade</option>
+                    </select>
+                </div>
+                <div class="form-group" id="highlight-discount-field" style="display: none;">
+                    <label>Porcentagem de Desconto (%) *</label>
+                    <input type="number" id="highlight-discount-percentage" min="0" max="100" step="0.01" placeholder="Ex: 15.5">
+                    <small style="color: rgba(245, 243, 239, 0.6); display: block; margin-top: 0.5rem;">
+                        Digite a porcentagem de desconto (0 a 100)
+                    </small>
+                </div>
+                <input type="hidden" id="highlight-edit-id">
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" data-modal="highlight-modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Certificate Modal -->
     <div id="certificate-modal" class="modal">
         <div class="modal-content" style="max-width: 800px;">
@@ -4529,6 +4690,7 @@
                                 highlight_type: productData.highlight_type || null,
                                 discount_percentage: productData.discount_percentage || null,
                                 is_novelty: productData.is_novelty || false,
+                                is_offer: productData.is_highlighted || false, // Compatibilidade com sistema antigo
                                 updated_at: new Date().toISOString()
                             };
 
@@ -4645,6 +4807,7 @@
                                 highlight_type: productData.highlight_type || null,
                                 discount_percentage: productData.discount_percentage || null,
                                 is_novelty: productData.is_novelty || false,
+                                is_offer: productData.is_highlighted || false, // Compatibilidade com sistema antigo
                                 is_active: true,
                                 created_at: new Date().toISOString(),
                                 updated_at: new Date().toISOString()
@@ -5469,6 +5632,75 @@
                 loadUsers();
                 alert(editId ? 'Usuário atualizado com sucesso!' : 'Usuário criado com sucesso!');
             });
+            
+            // Formulário de destaques
+            document.getElementById('highlight-type-select')?.addEventListener('change', function() {
+                const discountField = document.getElementById('highlight-discount-field');
+                if (this.value === 'discount') {
+                    discountField.style.display = 'block';
+                    document.getElementById('highlight-discount-percentage').required = true;
+                } else {
+                    discountField.style.display = 'none';
+                    document.getElementById('highlight-discount-percentage').required = false;
+                    document.getElementById('highlight-discount-percentage').value = '';
+                }
+            });
+            
+            document.getElementById('highlight-form')?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const productId = parseInt(document.getElementById('highlight-product-select').value);
+                const highlightType = document.getElementById('highlight-type-select').value;
+                const discountPercentage = highlightType === 'discount' ? 
+                    parseFloat(document.getElementById('highlight-discount-percentage').value) : null;
+                const editId = document.getElementById('highlight-edit-id').value;
+                
+                if (!productId || !highlightType) {
+                    alert('Preencha todos os campos obrigatórios!');
+                    return;
+                }
+                
+                if (highlightType === 'discount' && (!discountPercentage || discountPercentage < 0 || discountPercentage > 100)) {
+                    alert('Porcentagem de desconto deve ser um número entre 0 e 100!');
+                    return;
+                }
+                
+                const product = products.find(p => p.id === productId);
+                if (!product) {
+                    alert('Produto não encontrado!');
+                    return;
+                }
+                
+                // Atualizar produto
+                product.is_highlighted = true;
+                product.highlight_type = highlightType;
+                product.discount_percentage = discountPercentage;
+                product.is_novelty = highlightType === 'novelty';
+                product.is_offer = true; // Manter compatibilidade com sistema antigo
+                
+                // Salvar no Supabase
+                if (useSupabase) {
+                    try {
+                        await supabaseRequest('products', 'PATCH', {
+                            is_highlighted: true,
+                            highlight_type: highlightType,
+                            discount_percentage: discountPercentage,
+                            is_novelty: highlightType === 'novelty',
+                            is_offer: true, // Manter compatibilidade com sistema antigo
+                            updated_at: new Date().toISOString()
+                        }, `?id=eq.${productId}`);
+                        await loadDataFromSupabase();
+                    } catch (error) {
+                        console.error('Erro ao salvar destaque:', error);
+                        alert('Erro ao salvar destaque. Tente novamente.');
+                        return;
+                    }
+                }
+                
+                saveData();
+                closeModal('highlight-modal');
+                loadHighlights();
+                alert('Destaque salvo com sucesso!');
+            });
         }
 
         function showLogin() {
@@ -5518,6 +5750,7 @@
                     loadCustomers(); 
                     break;
                 case 'products': loadProducts(); break;
+                case 'highlights': loadHighlights(); break;
                 case 'sales': loadSales(); break;
                 case 'invoices': loadInvoices(); break;
                 case 'financial': loadFinancial(); break;
@@ -5808,6 +6041,423 @@
             });
         }
 
+        // Funções para gerenciar Destaques e Promoções
+        async function loadHighlights() {
+            // Recarregar produtos
+            if (useSupabase) {
+                await loadDataFromSupabase();
+            } else {
+                reloadDataFromStorage();
+            }
+            
+            // Debug: verificar todos os produtos e seus valores de destaque
+            console.log('🔍 Verificando produtos e seus destaques:');
+            products.forEach(p => {
+                const isHighlighted = p.is_highlighted === true || p.is_highlighted === 'true' || p.is_highlighted === 1 || p.is_highlighted === '1';
+                if (isHighlighted) {
+                    console.log(`  - ${p.name}: is_highlighted=${p.is_highlighted} (tipo: ${typeof p.is_highlighted}), highlight_type=${p.highlight_type}, is_offer=${p.is_offer}`);
+                }
+            });
+            
+            // Filtrar produtos em destaque - garantir que valores booleanos sejam tratados corretamente
+            // IMPORTANTE: Apenas produtos com is_highlighted explicitamente true devem aparecer
+            const highlightedProducts = products.filter(p => {
+                // Verificar se está realmente destacado (não apenas truthy)
+                const isHighlighted = p.is_highlighted === true || p.is_highlighted === 'true' || p.is_highlighted === 1 || p.is_highlighted === '1';
+                
+                // Se is_highlighted for false, null, undefined, 'false', 0, ou '', não deve aparecer
+                if (!isHighlighted) {
+                    return false;
+                }
+                
+                // Verificar se highlight_type existe (se não existir, pode ser um produto antigo)
+                // Se não tiver highlight_type mas estiver marcado como destacado, ainda mostrar
+                return true;
+            });
+            
+            console.log(`📊 Total de produtos em destaque encontrados: ${highlightedProducts.length}`);
+            const discountProducts = highlightedProducts.filter(p => p.highlight_type === 'discount');
+            const noveltyProducts = highlightedProducts.filter(p => p.highlight_type === 'novelty');
+            
+            console.log('📊 Produtos em destaque encontrados:', highlightedProducts.length);
+            console.log('📊 Produtos com desconto:', discountProducts.length);
+            console.log('📊 Produtos novidade:', noveltyProducts.length);
+            
+            // Atualizar estatísticas
+            document.getElementById('highlight-total-count').textContent = highlightedProducts.length;
+            document.getElementById('discount-total-count').textContent = discountProducts.length;
+            document.getElementById('novelty-total-count').textContent = noveltyProducts.length;
+            
+            // Carregar tabelas
+            loadDiscountProductsTable(discountProducts);
+            loadNoveltyProductsTable(noveltyProducts);
+            loadAllHighlightsTable(highlightedProducts);
+        }
+        
+        function loadDiscountProductsTable(products) {
+            const tbody = document.getElementById('discount-products-body');
+            tbody.innerHTML = '';
+            
+            if (products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum produto com desconto cadastrado</td></tr>';
+                return;
+            }
+            
+            products.forEach(product => {
+                const originalPrice = parseFloat(product.price) || 0;
+                const discount = parseFloat(product.discount_percentage) || 0;
+                const finalPrice = originalPrice * (1 - discount / 100);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${product.name || 'Sem nome'}</strong></td>
+                    <td>${product.brand || '-'}</td>
+                    <td>R$ ${originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                    <td><span style="color: #ef4444; font-weight: 600;">-${discount.toFixed(1)}%</span></td>
+                    <td><span style="color: #D4AF37; font-weight: 700;">R$ ${finalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></td>
+                    <td>${product.stock || 0}</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="editHighlight(${product.id})" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="removeHighlight(${product.id})" title="Remover Destaque">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function loadNoveltyProductsTable(products) {
+            const tbody = document.getElementById('novelty-products-body');
+            tbody.innerHTML = '';
+            
+            if (products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Nenhum produto novidade cadastrado</td></tr>';
+                return;
+            }
+            
+            products.forEach(product => {
+                const createdAt = product.created_at ? new Date(product.created_at).toLocaleDateString('pt-BR') : '-';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${product.name || 'Sem nome'}</strong></td>
+                    <td>${product.brand || '-'}</td>
+                    <td>R$ ${(parseFloat(product.price) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                    <td>${product.stock || 0}</td>
+                    <td>${createdAt}</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="editHighlight(${product.id})" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="removeHighlight(${product.id})" title="Remover Destaque">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function loadAllHighlightsTable(products) {
+            const tbody = document.getElementById('all-highlights-body');
+            tbody.innerHTML = '';
+            
+            if (products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Nenhum produto em destaque</td></tr>';
+                return;
+            }
+            
+            products.forEach(product => {
+                const typeLabel = product.highlight_type === 'discount' ? 
+                    `<span style="color: #ef4444;"><i class="fas fa-percent"></i> Desconto</span>` : 
+                    `<span style="color: #D4AF37;"><i class="fas fa-sparkles"></i> Novidade</span>`;
+                
+                const discountInfo = product.highlight_type === 'discount' && product.discount_percentage ?
+                    `-${product.discount_percentage.toFixed(1)}%` : '-';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${product.name || 'Sem nome'}</strong></td>
+                    <td>${typeLabel}</td>
+                    <td>${discountInfo}</td>
+                    <td>R$ ${(parseFloat(product.price) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                    <td><span class="status-badge ${product.is_active !== false ? 'cliente' : 'perdido'}">${product.is_active !== false ? 'Ativo' : 'Inativo'}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="editHighlight(${product.id})" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="removeHighlight(${product.id})" title="Remover Destaque">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        window.openAddHighlightModal = function(type) {
+            document.getElementById('highlight-modal-title').textContent = type === 'discount' ? 'Adicionar Desconto' : 'Adicionar Novidade';
+            document.getElementById('highlight-form').reset();
+            document.getElementById('highlight-edit-id').value = '';
+            document.getElementById('highlight-type-select').value = type || '';
+            document.getElementById('highlight-type-select').dispatchEvent(new Event('change'));
+            
+            // Popular select de produtos (apenas produtos que não estão em destaque)
+            const select = document.getElementById('highlight-product-select');
+            select.innerHTML = '<option value="">Selecione um produto</option>';
+            const availableProducts = products.filter(p => {
+                const isHighlighted = p.is_highlighted === true || p.is_highlighted === 'true' || p.is_highlighted === 1 || p.is_highlighted === '1';
+                return !isHighlighted && p.is_active !== false;
+            });
+            
+            if (availableProducts.length === 0) {
+                select.innerHTML = '<option value="">Nenhum produto disponível</option>';
+                select.disabled = true;
+                alert('Todos os produtos já estão em destaque ou não há produtos ativos disponíveis.');
+            } else {
+                select.disabled = false;
+                availableProducts.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = `${product.name}${product.brand ? ' - ' + product.brand : ''} - R$ ${(parseFloat(product.price) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+                    select.appendChild(option);
+                });
+            }
+            
+            openModal('highlight-modal');
+        };
+        
+        window.editHighlight = function(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product || !product.is_highlighted) return;
+            
+            document.getElementById('highlight-modal-title').textContent = 'Editar Destaque';
+            document.getElementById('highlight-edit-id').value = productId;
+            document.getElementById('highlight-product-select').value = productId;
+            document.getElementById('highlight-type-select').value = product.highlight_type || '';
+            document.getElementById('highlight-type-select').dispatchEvent(new Event('change'));
+            
+            if (product.highlight_type === 'discount') {
+                document.getElementById('highlight-discount-percentage').value = product.discount_percentage || '';
+            }
+            
+            // Popular select de produtos (incluindo o atual)
+            const select = document.getElementById('highlight-product-select');
+            select.innerHTML = '<option value="">Selecione um produto</option>';
+            products.filter(p => {
+                const isHighlighted = p.is_highlighted === true || p.is_highlighted === 'true' || p.is_highlighted === 1 || p.is_highlighted === '1';
+                return (p.id === productId || !isHighlighted) && p.is_active !== false;
+            }).forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.id;
+                option.textContent = `${p.name}${p.brand ? ' - ' + p.brand : ''} - R$ ${(parseFloat(p.price) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+                if (p.id === productId) option.selected = true;
+                select.appendChild(option);
+            });
+            
+            openModal('highlight-modal');
+        };
+        
+        window.removeHighlight = async function(productId) {
+            if (!confirm('Deseja realmente remover o destaque deste produto?')) return;
+            
+            const product = products.find(p => p.id === productId);
+            if (!product) {
+                alert('Produto não encontrado!');
+                return;
+            }
+            
+            console.log('🗑️ Removendo destaque do produto:', productId, product.name);
+            console.log('📋 Estado atual do produto:', {
+                id: product.id,
+                name: product.name,
+                is_highlighted: product.is_highlighted,
+                highlight_type: product.highlight_type,
+                is_offer: product.is_offer
+            });
+            
+            // Remover destaque localmente
+            product.is_highlighted = false;
+            product.highlight_type = null;
+            product.discount_percentage = null;
+            product.is_novelty = false;
+            product.is_offer = false; // Limpar também campo antigo para compatibilidade
+            
+            console.log('📋 Estado após remoção local:', {
+                id: product.id,
+                name: product.name,
+                is_highlighted: product.is_highlighted,
+                highlight_type: product.highlight_type,
+                is_offer: product.is_offer
+            });
+            
+            // Salvar no Supabase
+            if (useSupabase) {
+                try {
+                    console.log('💾 Enviando atualização para Supabase...');
+                    const updateData = {
+                        is_highlighted: false,
+                        highlight_type: null,
+                        discount_percentage: null,
+                        is_novelty: false,
+                        is_offer: false, // Limpar também campo antigo para compatibilidade
+                        updated_at: new Date().toISOString()
+                    };
+                    console.log('📤 Dados sendo enviados:', updateData);
+                    console.log('🔗 URL: products?id=eq.' + productId);
+                    
+                    const result = await supabaseRequest('products', 'PATCH', updateData, `?id=eq.${productId}`);
+                    
+                    console.log('✅ Resposta do Supabase:', result);
+                    
+                    // Verificar se a atualização foi bem-sucedida
+                    if (!result || (Array.isArray(result) && result.length === 0)) {
+                        console.warn('⚠️ A atualização pode não ter sido aplicada. Tentando novamente...');
+                        // Tentar novamente após um pequeno delay
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        const retryResult = await supabaseRequest('products', 'PATCH', updateData, `?id=eq.${productId}`);
+                        console.log('🔄 Resultado da segunda tentativa:', retryResult);
+                    }
+                    
+                    // Aguardar um pouco antes de recarregar para garantir que o Supabase processou
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // Recarregar dados do Supabase para garantir sincronização
+                    console.log('🔄 Recarregando dados do Supabase...');
+                    await loadDataFromSupabase();
+                    
+                    // Verificar se o produto foi realmente atualizado
+                    const updatedProduct = products.find(p => p.id === productId);
+                    if (updatedProduct) {
+                        console.log('📋 Estado do produto após recarregar:', {
+                            id: updatedProduct.id,
+                            name: updatedProduct.name,
+                            is_highlighted: updatedProduct.is_highlighted,
+                            highlight_type: updatedProduct.highlight_type,
+                            is_offer: updatedProduct.is_offer
+                        });
+                        
+                        // Verificar se ainda está destacado
+                        const stillHighlighted = updatedProduct.is_highlighted === true || updatedProduct.is_highlighted === 'true' || updatedProduct.is_highlighted === 1 || updatedProduct.is_highlighted === '1';
+                        if (stillHighlighted) {
+                            console.error('❌ ERRO: Produto ainda está destacado após atualização!');
+                            console.error('📋 Dados completos do produto:', updatedProduct);
+                        }
+                    } else {
+                        console.warn('⚠️ Produto não encontrado após recarregar');
+                    }
+                    
+                    console.log('✅ Dados recarregados do Supabase');
+                } catch (error) {
+                    console.error('❌ Erro ao remover destaque no Supabase:', error);
+                    alert('Erro ao remover destaque no Supabase. Verifique o console para mais detalhes.');
+                    return; // Não continuar se houver erro
+                }
+            }
+            
+            // Salvar no localStorage também
+            saveData();
+            console.log('💾 Dados salvos localmente');
+            
+            // Recarregar página de destaques
+            console.log('🔄 Recarregando página de destaques...');
+            await loadHighlights();
+            
+            // Verificar novamente se o produto ainda está em destaque
+            const checkProduct = products.find(p => p.id === productId);
+            const stillHighlighted = checkProduct && (checkProduct.is_highlighted === true || checkProduct.is_highlighted === 'true' || checkProduct.is_highlighted === 1 || checkProduct.is_highlighted === '1');
+            
+            if (stillHighlighted) {
+                console.error('⚠️ ATENÇÃO: Produto ainda está marcado como destacado após remoção!');
+                alert('⚠️ O produto pode ainda estar em destaque. Por favor, recarregue a página e tente novamente.');
+            } else {
+                alert('✅ Destaque removido com sucesso!');
+            }
+        };
+        
+        window.clearAllHighlights = async function() {
+            if (!confirm('⚠️ ATENÇÃO: Isso irá remover TODOS os destaques de TODOS os produtos. Deseja continuar?')) {
+                return;
+            }
+            
+            if (!confirm('⚠️ Esta ação não pode ser desfeita. Tem certeza?')) {
+                return;
+            }
+            
+            // Encontrar TODOS os produtos que podem estar em destaque (novo sistema ou antigo)
+            const highlightedProducts = products.filter(p => {
+                const isHighlighted = p.is_highlighted === true || p.is_highlighted === 'true' || p.is_highlighted === 1 || p.is_highlighted === '1';
+                const isOldOffer = p.is_offer === true || p.is_offer === 'true' || p.is_offer === 1 || p.is_offer === '1';
+                return isHighlighted || isOldOffer;
+            });
+            
+            if (highlightedProducts.length === 0) {
+                alert('Não há produtos em destaque para remover.');
+                return;
+            }
+            
+            console.log(`🗑️ Removendo destaques de ${highlightedProducts.length} produtos...`);
+            console.log('📋 Produtos que serão limpos:', highlightedProducts.map(p => `${p.name} (is_highlighted: ${p.is_highlighted}, is_offer: ${p.is_offer})`));
+            
+            // Remover destaques localmente de TODOS os produtos
+            products.forEach(product => {
+                // Limpar campos do novo sistema
+                product.is_highlighted = false;
+                product.highlight_type = null;
+                product.discount_percentage = null;
+                product.is_novelty = false;
+                // Limpar também campo antigo para compatibilidade
+                product.is_offer = false;
+            });
+            
+            // Salvar no Supabase - atualizar TODOS os produtos que estavam em destaque
+            if (useSupabase) {
+                try {
+                    console.log('💾 Atualizando produtos no Supabase...');
+                    
+                    // Atualizar todos os produtos que estavam em destaque
+                    const updatePromises = highlightedProducts.map(async (product) => {
+                        try {
+                            const result = await supabaseRequest('products', 'PATCH', {
+                                is_highlighted: false,
+                                highlight_type: null,
+                                discount_percentage: null,
+                                is_novelty: false,
+                                is_offer: false, // Limpar também campo antigo para compatibilidade
+                                updated_at: new Date().toISOString()
+                            }, `?id=eq.${product.id}`);
+                            console.log(`✅ Produto ${product.name} (ID: ${product.id}) atualizado no Supabase`);
+                            return result;
+                        } catch (error) {
+                            console.error(`❌ Erro ao remover destaque do produto ${product.id} (${product.name}):`, error);
+                            throw error;
+                        }
+                    });
+                    
+                    await Promise.all(updatePromises);
+                    console.log('✅ Todos os destaques removidos do Supabase');
+                    
+                    // Recarregar dados do Supabase para garantir sincronização
+                    await loadDataFromSupabase();
+                    console.log('✅ Dados recarregados do Supabase');
+                } catch (error) {
+                    console.error('❌ Erro ao remover destaques no Supabase:', error);
+                    alert('Erro ao remover destaques no Supabase. Verifique o console para mais detalhes.');
+                }
+            }
+            
+            // Salvar no localStorage
+            saveData();
+            console.log('💾 Dados salvos localmente');
+            
+            // Recarregar página de destaques
+            await loadHighlights();
+            alert(`✅ ${highlightedProducts.length} destaque(s) removido(s) com sucesso!\n\nRecarregue a página da loja para ver as mudanças.`);
+        };
+        
         async function loadProducts() {
             // Carregar do Supabase se disponível
             if (useSupabase) {
@@ -7638,11 +8288,14 @@ CJ Perfumes`;
                         image_url: p.image_url,
                         image_base64: null, // Não existe no banco
                         is_active: p.is_active !== false,
-                        // Campos de destaque
-                        is_highlighted: p.is_highlighted || false,
-                        highlight_type: p.highlight_type || null,
-                        discount_percentage: p.discount_percentage ? parseFloat(p.discount_percentage) : null,
-                        is_novelty: p.is_novelty || false,
+                        // Campos de destaque - garantir valores booleanos corretos
+                        // IMPORTANTE: Se is_highlighted for false/null/undefined, garantir que seja false
+                        is_highlighted: p.is_highlighted === true || p.is_highlighted === 'true' || p.is_highlighted === 1 || p.is_highlighted === '1' ? true : false,
+                        highlight_type: (p.is_highlighted === true || p.is_highlighted === 'true' || p.is_highlighted === 1 || p.is_highlighted === '1') ? (p.highlight_type || null) : null,
+                        discount_percentage: (p.is_highlighted === true || p.is_highlighted === 'true' || p.is_highlighted === 1 || p.is_highlighted === '1') && p.discount_percentage ? parseFloat(p.discount_percentage) : null,
+                        is_novelty: p.is_novelty === true || p.is_novelty === 'true' || p.is_novelty === 1 || p.is_novelty === '1' ? true : false,
+                        // Compatibilidade com sistema antigo - só true se is_highlighted for true
+                        is_offer: (p.is_highlighted === true || p.is_highlighted === 'true' || p.is_highlighted === 1 || p.is_highlighted === '1') || (p.is_offer === true || p.is_offer === 'true' || p.is_offer === 1 || p.is_offer === '1') ? true : false,
                         fragrance: (() => {
                             // Se fragrance for string JSON, fazer parse
                             if (typeof p.fragrance === 'string' && p.fragrance.startsWith('{')) {
