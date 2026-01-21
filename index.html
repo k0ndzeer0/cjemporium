@@ -3313,6 +3313,46 @@
                     <label>Estoque</label>
                     <input type="number" id="product-stock" value="0">
                 </div>
+                
+                <!-- Seção de Destaque -->
+                <div class="form-group" style="display: flex; align-items: center; gap: 10px; padding: 15px; background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 8px; margin-top: 1rem;">
+                    <input type="checkbox" id="product-is-highlighted" style="width: 20px; height: 20px; cursor: pointer;">
+                    <label for="product-is-highlighted" style="margin: 0; cursor: pointer; color: var(--primary-color); font-weight: 600; flex: 1;">
+                        <i class="fas fa-star"></i> Colocar produto em destaque
+                    </label>
+                </div>
+                
+                <!-- Opções de Destaque (aparece quando checkbox está marcado) -->
+                <div id="highlight-options" style="display: none; background: rgba(212, 175, 55, 0.05); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+                    <div class="form-group">
+                        <label style="color: #D4AF37; font-weight: 600;">Tipo de Destaque *</label>
+                        <select id="product-highlight-type" style="width: 100%;">
+                            <option value="">Selecione o tipo</option>
+                            <option value="discount">Desconto</option>
+                            <option value="novelty">Novidade</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Campo de desconto (aparece quando tipo é "discount") -->
+                    <div id="discount-field" style="display: none;">
+                        <div class="form-group">
+                            <label style="color: #D4AF37; font-weight: 600;">Porcentagem de Desconto (%)</label>
+                            <input type="number" id="product-discount-percentage" min="0" max="100" step="0.01" placeholder="Ex: 15.5" style="width: 100%;">
+                            <small style="color: rgba(245, 243, 239, 0.6); display: block; margin-top: 0.5rem;">
+                                Digite a porcentagem de desconto (0 a 100)
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <!-- Badge de novidade (aparece quando tipo é "novelty") -->
+                    <div id="novelty-badge" style="display: none;">
+                        <div style="background: rgba(212, 175, 55, 0.2); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 8px; padding: 1rem; text-align: center;">
+                            <i class="fas fa-sparkles" style="color: #D4AF37; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                            <p style="color: #D4AF37; font-weight: 600; margin: 0;">Este produto será marcado como NOVIDADE</p>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" data-modal="product-modal">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Salvar</button>
@@ -4086,6 +4126,25 @@
                 document.getElementById('product-image-input').value = '';
                 document.getElementById('product-modal-title').textContent = 'Novo Produto';
                 selectedImageFile = null;
+                
+                // Limpar campos de destaque
+                const isHighlightedCheckbox = document.getElementById('product-is-highlighted');
+                const highlightOptions = document.getElementById('highlight-options');
+                if (isHighlightedCheckbox) {
+                    isHighlightedCheckbox.checked = false;
+                }
+                if (highlightOptions) {
+                    highlightOptions.style.display = 'none';
+                }
+                const highlightTypeSelect = document.getElementById('product-highlight-type');
+                if (highlightTypeSelect) {
+                    highlightTypeSelect.value = '';
+                }
+                const discountPercentageInput = document.getElementById('product-discount-percentage');
+                if (discountPercentageInput) {
+                    discountPercentageInput.value = '';
+                }
+                
                 openModal('product-modal');
             });
             document.getElementById('add-coupon-btn')?.addEventListener('click', () => {
@@ -4367,6 +4426,52 @@
                         imageUrl = document.getElementById('product-image-base64').value;
                     }
                     
+                    // Campos de destaque
+                    const isHighlightedCheckbox = document.getElementById('product-is-highlighted');
+                    const isHighlighted = isHighlightedCheckbox?.checked || false;
+                    const highlightTypeSelect = document.getElementById('product-highlight-type');
+                    let highlightType = null;
+                    let discountPercentage = null;
+                    let isNovelty = false;
+                    
+                    // Só processar campos de destaque se o checkbox estiver marcado
+                    if (isHighlighted) {
+                        highlightType = highlightTypeSelect?.value || null;
+                        
+                        if (highlightType === 'discount') {
+                            const discountPercentageInput = document.getElementById('product-discount-percentage');
+                            const discountValue = discountPercentageInput?.value;
+                            if (discountValue && discountValue.trim() !== '') {
+                                discountPercentage = parseFloat(discountValue);
+                                if (isNaN(discountPercentage) || discountPercentage < 0 || discountPercentage > 100) {
+                                    alert('Porcentagem de desconto deve ser um número entre 0 e 100!');
+                                    submitBtn.disabled = false;
+                                    submitBtn.innerHTML = originalText;
+                                    return;
+                                }
+                            } else {
+                                alert('Por favor, informe a porcentagem de desconto!');
+                                submitBtn.disabled = false;
+                                submitBtn.innerHTML = originalText;
+                                return;
+                            }
+                        } else if (highlightType === 'novelty') {
+                            isNovelty = true;
+                        } else if (!highlightType) {
+                            alert('Por favor, selecione o tipo de destaque (Desconto ou Novidade)!');
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalText;
+                            return;
+                        }
+                    }
+                    
+                    console.log('📌 Campos de destaque:', {
+                        isHighlighted,
+                        highlightType,
+                        discountPercentage,
+                        isNovelty
+                    });
+                    
                     const productData = {
                     name: document.getElementById('product-name').value,
                     brand: document.getElementById('product-brand').value,
@@ -4393,7 +4498,12 @@
                         projection: document.getElementById('product-projection').value || '',
                         occasion: document.getElementById('product-occasion').value || '',
                         description: document.getElementById('product-description').value || ''
-                    }
+                    },
+                    // Campos de destaque
+                    is_highlighted: isHighlighted,
+                    highlight_type: highlightType,
+                    discount_percentage: discountPercentage,
+                    is_novelty: isNovelty
                 };
                 
                 if (editingProductId) {
@@ -4415,16 +4525,27 @@
                                 stock_quantity: productData.stock || 0,
                                 image_url: productData.image_url || null,
                                 // image_base64 removido - coluna não existe na tabela
+                                is_highlighted: productData.is_highlighted || false,
+                                highlight_type: productData.highlight_type || null,
+                                discount_percentage: productData.discount_percentage || null,
+                                is_novelty: productData.is_novelty || false,
                                 updated_at: new Date().toISOString()
                             };
 
                             console.log('💾 Atualizando produto no Supabase...', supabaseUpdate);
+                            console.log('📌 Campos de destaque sendo enviados:', {
+                                is_highlighted: supabaseUpdate.is_highlighted,
+                                highlight_type: supabaseUpdate.highlight_type,
+                                discount_percentage: supabaseUpdate.discount_percentage,
+                                is_novelty: supabaseUpdate.is_novelty
+                            });
                             
                             // Atualizar no Supabase
                             const updatedProduct = await supabaseRequest('products', 'PATCH', supabaseUpdate, `?id=eq.${editingProductId}`);
                             
                             if (updatedProduct) {
                                 console.log('✅ Produto atualizado no Supabase');
+                                console.log('📦 Produto retornado do Supabase:', updatedProduct);
                                 
                                 // Recarregar produtos do Supabase
                                 await loadDataFromSupabase();
@@ -4520,12 +4641,22 @@
                                 stock_quantity: productData.stock || 0,
                                 image_url: productData.image_url || null,
                                 // image_base64 removido - coluna não existe na tabela
+                                is_highlighted: productData.is_highlighted || false,
+                                highlight_type: productData.highlight_type || null,
+                                discount_percentage: productData.discount_percentage || null,
+                                is_novelty: productData.is_novelty || false,
                                 is_active: true,
                                 created_at: new Date().toISOString(),
                                 updated_at: new Date().toISOString()
                             };
 
                             console.log('💾 Salvando produto no Supabase...', supabaseProduct);
+                            console.log('📌 Campos de destaque sendo enviados:', {
+                                is_highlighted: supabaseProduct.is_highlighted,
+                                highlight_type: supabaseProduct.highlight_type,
+                                discount_percentage: supabaseProduct.discount_percentage,
+                                is_novelty: supabaseProduct.is_novelty
+                            });
                             
                             // Salvar no Supabase
                             let newProduct;
@@ -4540,6 +4671,12 @@
                             if (newProduct && (Array.isArray(newProduct) ? newProduct.length > 0 : newProduct.id)) {
                                 const savedProduct = Array.isArray(newProduct) ? newProduct[0] : newProduct;
                                 console.log('✅ Produto salvo no Supabase:', savedProduct);
+                                console.log('📦 Campos de destaque salvos:', {
+                                    is_highlighted: savedProduct.is_highlighted,
+                                    highlight_type: savedProduct.highlight_type,
+                                    discount_percentage: savedProduct.discount_percentage,
+                                    is_novelty: savedProduct.is_novelty
+                                });
                                 
                                 // Recarregar produtos do Supabase
                                 await loadDataFromSupabase();
@@ -4668,6 +4805,31 @@
                 document.getElementById('product-price').value = product.price || '';
                 document.getElementById('product-cost').value = product.cost || '';
                 document.getElementById('product-stock').value = product.stock || 0;
+                
+                // Campos de destaque
+                const isHighlightedCheckbox = document.getElementById('product-is-highlighted');
+                const highlightTypeSelect = document.getElementById('product-highlight-type');
+                const discountPercentageInput = document.getElementById('product-discount-percentage');
+                
+                if (isHighlightedCheckbox) {
+                    isHighlightedCheckbox.checked = product.is_highlighted || false;
+                    // Disparar evento para mostrar/ocultar campos
+                    if (isHighlightedCheckbox.checked) {
+                        document.getElementById('highlight-options').style.display = 'block';
+                    }
+                }
+                
+                if (highlightTypeSelect) {
+                    highlightTypeSelect.value = product.highlight_type || '';
+                    // Disparar evento para mostrar campo correto
+                    if (highlightTypeSelect.value) {
+                        highlightTypeSelect.dispatchEvent(new Event('change'));
+                    }
+                }
+                
+                if (discountPercentageInput) {
+                    discountPercentageInput.value = product.discount_percentage || '';
+                }
                 
                 // Imagem - usar apenas URL do Supabase Storage
                 const imageUrl = product.image_url || product.image;
@@ -4887,6 +5049,38 @@
                 document.getElementById('product-image-input').value = '';
                 selectedImageFile = null;
             };
+            
+            // Controlar exibição dos campos de destaque
+            document.getElementById('product-is-highlighted')?.addEventListener('change', function() {
+                const highlightOptions = document.getElementById('highlight-options');
+                if (this.checked) {
+                    highlightOptions.style.display = 'block';
+                } else {
+                    highlightOptions.style.display = 'none';
+                    // Limpar campos quando desmarcar
+                    document.getElementById('product-highlight-type').value = '';
+                    document.getElementById('product-discount-percentage').value = '';
+                    document.getElementById('discount-field').style.display = 'none';
+                    document.getElementById('novelty-badge').style.display = 'none';
+                }
+            });
+            
+            // Controlar exibição do campo de desconto ou badge de novidade
+            document.getElementById('product-highlight-type')?.addEventListener('change', function() {
+                const discountField = document.getElementById('discount-field');
+                const noveltyBadge = document.getElementById('novelty-badge');
+                
+                if (this.value === 'discount') {
+                    discountField.style.display = 'block';
+                    noveltyBadge.style.display = 'none';
+                } else if (this.value === 'novelty') {
+                    discountField.style.display = 'none';
+                    noveltyBadge.style.display = 'block';
+                } else {
+                    discountField.style.display = 'none';
+                    noveltyBadge.style.display = 'none';
+                }
+            });
 
             window.applyCoupon = function() {
                 const code = document.getElementById('sale-coupon-code').value.toUpperCase();
@@ -7444,6 +7638,11 @@ CJ Perfumes`;
                         image_url: p.image_url,
                         image_base64: null, // Não existe no banco
                         is_active: p.is_active !== false,
+                        // Campos de destaque
+                        is_highlighted: p.is_highlighted || false,
+                        highlight_type: p.highlight_type || null,
+                        discount_percentage: p.discount_percentage ? parseFloat(p.discount_percentage) : null,
+                        is_novelty: p.is_novelty || false,
                         fragrance: (() => {
                             // Se fragrance for string JSON, fazer parse
                             if (typeof p.fragrance === 'string' && p.fragrance.startsWith('{')) {
