@@ -3432,9 +3432,16 @@
                     <input type="number" step="0.01" id="product-cost" placeholder="Para cálculo de margem">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Estoque</label>
-                    <input type="number" id="product-stock" value="0">
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Estoque</label>
+                        <input type="number" id="product-stock" value="0">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Ordem de Exibição</label>
+                        <input type="number" id="product-display-order" placeholder="1 = Primeiro" value="999">
+                        <small style="color: rgba(245, 243, 239, 0.5); font-size: 0.7rem;">Menor número aparece primeiro</small>
+                    </div>
                 </div>
                 
                 <!-- Seção de Destaque -->
@@ -4645,6 +4652,8 @@
                     price: price,
                     cost: cost,
                         stock: parseInt(document.getElementById('product-stock').value) || 0,
+                        display_order: parseInt(document.getElementById('product-display-order').value) || 999,
+                        display_order: document.getElementById('product-display-order').value !== '' ? parseInt(document.getElementById('product-display-order').value) : 999,
                         // Imagem - salvar apenas URL do Supabase (Storage)
                         image: imageUrl,
                         image_url: imageUrl && imageUrl.startsWith('http') ? imageUrl : null, // URL do Supabase Storage
@@ -4684,6 +4693,7 @@
                                 price: productData.price,
                                 cost: productData.cost || null,
                                 stock_quantity: productData.stock || 0,
+                                display_order: productData.display_order,
                                 image_url: productData.image_url || null,
                                 // image_base64 removido - coluna não existe na tabela
                                 is_highlighted: productData.is_highlighted || false,
@@ -4801,6 +4811,7 @@
                                 price: productData.price,
                                 cost: productData.cost || null,
                                 stock_quantity: productData.stock || 0,
+                                display_order: productData.display_order,
                                 image_url: productData.image_url || null,
                                 // image_base64 removido - coluna não existe na tabela
                                 is_highlighted: productData.is_highlighted || false,
@@ -4968,6 +4979,7 @@
                 document.getElementById('product-price').value = product.price || '';
                 document.getElementById('product-cost').value = product.cost || '';
                 document.getElementById('product-stock').value = product.stock || 0;
+                document.getElementById('product-display-order').value = product.display_order !== undefined && product.display_order !== null ? product.display_order : 999;
                 
                 // Campos de destaque
                 const isHighlightedCheckbox = document.getElementById('product-is-highlighted');
@@ -8269,6 +8281,7 @@ CJ Perfumes`;
                 
                 // Carregar produtos
                 const supabaseProducts = await supabaseRequest('products', 'GET', null, '?is_active=eq.true&order=created_at.desc');
+                const supabaseProducts = await supabaseRequest('products', 'GET', null, '?is_active=eq.true&order=display_order.asc,created_at.desc');
                 if (supabaseProducts) {
                     products = supabaseProducts.map(p => ({
                         id: p.id,
@@ -8283,6 +8296,7 @@ CJ Perfumes`;
                         price: parseFloat(p.price),
                         cost: p.cost ? parseFloat(p.cost) : null,
                         stock: p.stock_quantity || 0,
+                        display_order: p.display_order !== null ? p.display_order : 999,
                         stock_quantity: p.stock_quantity || 0,
                         image: p.image_url || null, // Usar apenas image_url do Supabase
                         image_url: p.image_url,
@@ -8308,6 +8322,14 @@ CJ Perfumes`;
                             return p.fragrance || null;
                         })()
                     }));
+                    
+                    // Ordenar produtos: Primeiro pela ordem de exibição (crescente), depois por data (decrescente)
+                    products.sort((a, b) => {
+                        const orderA = a.display_order !== undefined ? a.display_order : 999;
+                        const orderB = b.display_order !== undefined ? b.display_order : 999;
+                        return (orderA - orderB) || (new Date(b.created_at || 0) - new Date(a.created_at || 0));
+                    });
+                    
                     console.log(`✅ ${products.length} produtos carregados do Supabase`);
                 }
 
