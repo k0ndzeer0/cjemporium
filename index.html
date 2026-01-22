@@ -4295,6 +4295,15 @@
                 document.getElementById('product-modal-title').textContent = 'Novo Produto';
                 selectedImageFile = null;
                 
+                // Lógica de Sequência Automática (1 ao 999)
+                // Encontrar o maior display_order atual que não seja 999 (padrão)
+                const usedOrders = products
+                    .map(p => p.display_order)
+                    .filter(o => o !== null && o !== undefined && o !== 999 && !isNaN(o));
+                
+                const nextOrder = usedOrders.length > 0 ? Math.min(Math.max(...usedOrders) + 1, 999) : 1;
+                document.getElementById('product-display-order').value = nextOrder;
+                
                 // Limpar campos de destaque
                 const isHighlightedCheckbox = document.getElementById('product-is-highlighted');
                 const highlightOptions = document.getElementById('highlight-options');
@@ -4652,7 +4661,6 @@
                     price: price,
                     cost: cost,
                         stock: parseInt(document.getElementById('product-stock').value) || 0,
-                        display_order: parseInt(document.getElementById('product-display-order').value) || 999,
                         display_order: document.getElementById('product-display-order').value !== '' ? parseInt(document.getElementById('product-display-order').value) : 999,
                         // Imagem - salvar apenas URL do Supabase (Storage)
                         image: imageUrl,
@@ -8280,7 +8288,6 @@ CJ Perfumes`;
                 console.log('🔄 Carregando dados do Supabase...');
                 
                 // Carregar produtos
-                const supabaseProducts = await supabaseRequest('products', 'GET', null, '?is_active=eq.true&order=created_at.desc');
                 const supabaseProducts = await supabaseRequest('products', 'GET', null, '?is_active=eq.true&order=display_order.asc,created_at.desc');
                 if (supabaseProducts) {
                     products = supabaseProducts.map(p => ({
